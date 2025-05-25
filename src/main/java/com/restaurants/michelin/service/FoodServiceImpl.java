@@ -1,0 +1,34 @@
+package com.restaurants.michelin.service;
+
+import com.restaurants.michelin.model.Food;
+import com.restaurants.michelin.repository.FoodRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class FoodServiceImpl implements FoodService<Food>{
+    @Autowired
+    FoodRepository foodRepository;
+    @Override
+    public List<Food> findAll() {
+        return foodRepository.findAll();
+    }
+
+    @Override
+    public void save(Food food) {
+        foodRepository.save(food);
+
+    }
+    @Override
+    public Food findById(Integer id) {
+        return foodRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        foodRepository.delete(findById(id));
+    }
+
+}

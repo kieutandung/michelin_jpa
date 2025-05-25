@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ - Danh sách món ăn</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #0066cc;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .user-table {
+            width: auto; /* để bảng rộng theo nội dung */
+            max-width: 100%; /* không quá chiều ngang màn hình */
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-top: 15px;
+            table-layout: auto; /* để độ rộng cột tự động */
+        }
+
+        .user-table th, .user-table td {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            white-space: nowrap;
+        }
+
+        .user-table th {
+            background-color: #f0f0f0;
+        }
+
+        .user-table tr:hover {
+            background-color: #f5faff;
+        }
+
+        form {
+            display: inline;
+            margin: 0;
+        }
+
+        button {
+            background-color: transparent;
+            border: none;
+            color: #cc0000;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+        }
+
+        button:hover {
+            text-decoration: underline;
+        }
+
+        #name, #type {
+            align-items: center;
+        }
+
+        #quantity, #price {
+            align-items: center;
+        }
+
+        #action {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<header style="background-color: #f0f0f0; padding: 10px; margin-bottom: 20px;">
+    <nav>
+        <a th:href="@{/michelin/home}" style="margin-right: 20px;">🏠 Trang món ăn</a>
+        <a th:href="@{/michelin/home/users}" style="margin-right: 20px;">👥 Danh sách người dùng</a>
+    </nav>
+</header>
+<a th:href="@{/michelin/home/add}">Thêm tài khoản mới</a>
+<h2>Danh sách người dùng</h2>
+
+<table class="user-table">
+    <thead>
+    <tr>
+        <th>Ảnh</th>
+        <th>Tên tài khoản</th>
+        <th>Email</th>
+        <th>Vai trò</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td>
+            <img th:src="@{'/image/' + ${user.image}}" alt="user image" width="80"/>
+        </td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.role}"></td>
+        <td th:text="${user.quantity}"></td>
+        <td>
+            <a th:href="@{'/michelin/home/' + ${user.id} + '/edit'}">Edit</a>
+            <form th:action="@{/michelin/home/{id}(id=${user.id})}" method="post"
+                  onsubmit="return confirm('Are you sure?')">
+                <input type="hidden" name="method" value="delete"/>
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
