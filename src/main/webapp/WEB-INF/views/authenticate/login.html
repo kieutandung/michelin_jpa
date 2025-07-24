@@ -81,6 +81,11 @@
         <button type="submit">Đăng nhập</button>
     </form>
 
+    <p style="text-align: center; margin-top: 15px;">
+        Chưa có tài khoản?
+        <a th:href="@{/michelin/register}" style="color: #007bff; text-decoration: none;">Đăng ký ngay</a>
+    </p>
+
     <!-- Hiển thị lỗi -->
     <p th:if="${error}" th:text="${error}" class="error"></p>
 </div>

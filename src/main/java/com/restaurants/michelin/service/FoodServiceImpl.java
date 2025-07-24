@@ -31,4 +31,8 @@ public class FoodServiceImpl implements FoodService<Food>{
         foodRepository.delete(findById(id));
     }
 
+    @Override
+    public List<Food> searchByName(String keyword) {
+        return foodRepository.searchByKeyword(keyword);
+    }
 }

@@ -2,21 +2,37 @@ package com.restaurants.michelin.model;
 
 import javax.persistence.*;
 
-@Entity @Table(name = "food")
+@Entity
+@Table(name = "food")
 public class Food {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idFood;
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('Món_chính', 'Đồ_tráng_miệng', 'món_phụ', 'Đồ_uống')")
+    @Column(name = "type", columnDefinition = "ENUM('Món_chính', 'Đồ_tráng_miệng', 'Món_phụ', 'Đồ_uống')")
     private FoodType type;
-    private String nameFood, image;
-    private int price , quantity;
+    @Column(name = "nameFood", nullable = false)
+    private String nameFood;
 
-    public Food(Integer id, FoodType type, String nameFood, String image, int price, int quantity) {
-        this.id = id;
+    @Column(nullable = false)
+    private int price;
+
+    @Column(nullable = false)
+    private int quantity;
+
+    @Column(name = "image")
+    private String image;
+
+    public Food(Integer idFood, FoodType type, String nameFood, int price, int quantity) {
+        this.idFood = idFood;
         this.type = type;
         this.nameFood = nameFood;
-        this.image = image;
+        this.price = price;
+        this.quantity = quantity;
+    }
+    public Food(FoodType type, String nameFood, int price, int quantity) {
+        this.type = type;
+        this.nameFood = nameFood;
         this.price = price;
         this.quantity = quantity;
     }
@@ -25,12 +41,12 @@ public class Food {
 
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getIdFood() {
+        return idFood;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdFood(Integer idFood) {
+        this.idFood = idFood;
     }
 
     public String getNameFood() {

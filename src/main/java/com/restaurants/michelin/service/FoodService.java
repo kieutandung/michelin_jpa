@@ -7,4 +7,5 @@ public interface FoodService<T> {
     void save(T t);
     T findById(Integer id);
     void delete(Integer id);
+    List<T> searchByName(String keyword);
 }

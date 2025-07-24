@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 80px 0 0 0;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1100px;
+            margin: 50px auto;
+            gap: 30px;
+        }
+
+        .checkout-form, .order-summary {
+            background: white;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            flex: 1;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background-color: #111;
+            color: white;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        #logo {
+            font-size: 24px;
+            color: white;
+        }
+
+
+        nav.nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav.nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav.nav-links a:hover {
+            color: #ffd700;
+        }
+
+        .search-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .right-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cart-icon {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .cart-icon:hover {
+            color: #ffd700;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .account-dropdown {
+            position: relative;
+        }
+
+        .account-name {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            list-style: none;
+            padding: 10px 0;
+            min-width: 180px;
+            z-index: 1000;
+        }
+
+        .dropdown-menu li a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu li a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .account-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            nav.nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .search-wrapper {
+                justify-content: flex-start;
+                width: 100%;
+            }
+
+            .right-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .dropdown-menu {
+                right: auto;
+                left: 0;
+            }
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .order-summary table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-summary th, .order-summary td {
+            padding: 10px 0;
+            text-align: left;
+        }
+
+        .order-summary td:last-child {
+            text-align: right;
+        }
+
+        .total {
+            font-weight: bold;
+        }
+
+        .btn-order {
+            background-color: #e53935;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo-container">
+        <img src="/image/logo.png" alt="Logo">
+    </div>
+
+    <nav class="nav-links">
+        <a th:href="@{/michelin/user/home}">Trang chủ</a>
+        <a href="#">Giới thiệu</a>
+        <a href="#">Thực đơn</a>
+        <a href="#">Tin tức</a>
+        <a href="#">Liên hệ</a>
+    </nav>
+
+    <div class="search-wrapper">
+        <form th:action="@{/michelin/user/home/search}" method="get" class="position-relative search-wrapper" style="max-width: 300px; width: 100%;">
+            <input type="text" name="keyword" class="form-control search-input" placeholder="Tìm món ăn..." th:value="${param.keyword}">
+        </form>
+    </div>
+
+    <div class="right-group">
+        <a th:href="@{/michelin/user/home/cart}" class="cart-icon">
+            <i class="fa-solid fa-cart-shopping fa-lg"></i>
+        </a>
+
+        <div class="user-menu">
+            <div th:if="${session.loggedInUser != null}" class="account-dropdown">
+                <a href="#" class="account-name">
+                    <i class="fa-solid fa-user"></i>
+                    <span th:text="${session.loggedInUser.name}">Tên người dùng</span>
+                    <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/michelin/user/home/profile}">Thông tin cá nhân</a></li>
+                    <li><a th:href="@{/michelin/user/home/orders}">Đơn hàng</a></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Đăng xuất</a>
+                    </li>
+                </ul>
+            </div>
+            <a th:if="${session.loggedInUser == null}" href="/michelin/login" class="login-btn">Đăng nhập</a>
+        </div>
+    </div>
+</div>
+<form th:action="@{/michelin/user/home/checkout}" method="post">
+    <div class="container">
+        <div class="checkout-form">
+            <h2>THÔNG TIN THANH TOÁN</h2>
+
+            <input type="text" name="customerName" placeholder="Họ và tên *" required
+                   th:value="${user.name}" readonly>
+
+            <input type="email" name="email" placeholder="Email *" required
+                   th:value="${user.email}" readonly>
+
+            <input type="text" name="phone" placeholder="Số điện thoại *" required
+                   th:value="${user.phone}" readonly>
+
+            <input type="text" name="address" placeholder="Địa chỉ *" required
+                   th:value="${user.address}">
+        </div>
+
+        <div class="order-summary">
+            <h2>ĐƠN HÀNG CỦA BẠN</h2>
+            <table>
+                <tbody>
+                <tr th:each="item : ${cartItems}">
+                    <td><span th:text="${item.food.nameFood}"></span> × <span th:text="${item.quantity}"></span></td>
+                    <td th:text="${#numbers.formatInteger(item.food.price * item.quantity, 0, 'POINT')} + ' đ'"></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td>Tạm tính</td>
+                    <td th:text="${#numbers.formatInteger(totalPrice, 0, 'POINT')} + ' đ'"></td>
+                </tr>
+                <tr>
+                    <td>Phí dịch vụ</td>
+                    <td th:text="${#numbers.formatInteger(serviceFee, 0, 'POINT')} + ' đ'"></td>
+                </tr>
+                <tr>
+                    <td>VAT</td>
+                    <td th:text="${#numbers.formatInteger(vatFee, 0, 'POINT')} + ' đ'"></td>
+                </tr>
+                <tr class="total">
+                    <td>Tổng</td>
+                    <td th:text="${#numbers.formatInteger(grandTotal, 0, 'POINT')} + ' đ'"></td>
+                </tr>
+                </tfoot>
+            </table>
+            <button type="submit" class="btn-order">ĐẶT HÀNG</button>
+        </div>
+    </div>
+</form>
+
+
+</body>
+<script>
+    function handleMenuChange(select) {
+        const url = select.value;
+        if (url) {
+            window.location.href = url;
+        }
+    }
+</script>
+</html>

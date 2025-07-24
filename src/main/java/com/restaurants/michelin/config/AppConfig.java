@@ -37,9 +37,6 @@ import java.util.Properties;
 @ComponentScan(basePackages = "com.restaurants.michelin")
 public class AppConfig implements WebMvcConfigurer, ApplicationContextAware {
     private ApplicationContext applicationContext;
-    @Value("${file-upload}")
-    private String upload;
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -114,18 +111,23 @@ public class AppConfig implements WebMvcConfigurer, ApplicationContextAware {
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
         return properties;
     }
-    //Upload file
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/image/**")
-                .addResourceLocations("file:" + upload);
-    }
     @Bean(name = "multipartResolver")
     public CommonsMultipartResolver getResolver() {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
         resolver.setMaxUploadSizePerFile(52428800);
         return resolver;
     }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry
+                .addResourceHandler("/css/**")
+                .addResourceLocations("/css/");
+
+        registry
+                .addResourceHandler("/image/**")
+                .addResourceLocations("/image/");
+    }
+
 }
 
 

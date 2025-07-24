@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng</title>
+    <!-- Font & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            padding-top: 80px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 40px;
+            background-color: #111;
+            color: white;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            height: 48px;
+            margin-right: 10px;
+        }
+
+        #logo {
+            font-size: 24px;
+            color: white;
+        }
+
+
+        nav.nav-links {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        nav.nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav.nav-links a:hover {
+            color: #ffd700;
+        }
+
+        .search-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-form {
+            display: flex;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .right-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cart-icon {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .cart-icon:hover {
+            color: #ffd700;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .account-dropdown {
+            position: relative;
+        }
+
+        .account-name {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            list-style: none;
+            padding: 10px 0;
+            min-width: 180px;
+            z-index: 1000;
+        }
+
+        .dropdown-menu li a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu li a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .account-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 15px 20px;
+            }
+
+            nav.nav-links {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .search-wrapper {
+                justify-content: flex-start;
+                width: 100%;
+            }
+
+            .right-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .dropdown-menu {
+                right: auto;
+                left: 0;
+            }
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .cart-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        td img {
+            width: 80px;
+            border-radius: 8px;
+        }
+
+        .qty-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qty-control button {
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .qty-control input {
+            width: 40px;
+            text-align: center;
+            border: none;
+            font-size: 16px;
+        }
+
+        .cart-summary {
+            width: 350px;
+            background: white;
+            padding: 24px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .cart-summary p {
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .cart-summary .total {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .cart-summary .checkout-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #e53935;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            text-decoration: none;
+            background-color: #6c4c41;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: #4e2f2b;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo-container">
+        <img src="/image/logo.png" alt="Logo">
+    </div>
+
+    <nav class="nav-links">
+        <a th:href="@{/michelin/user/home}">Trang chủ</a>
+        <a href="#">Giới thiệu</a>
+        <a href="#">Thực đơn</a>
+        <a href="#">Tin tức</a>
+        <a href="#">Liên hệ</a>
+    </nav>
+    <div class="search-wrapper">
+        <form th:action="@{/michelin/user/home/search}" method="get" class="search-form">
+            <input type="text" name="keyword" class="search-input" placeholder="Tìm món ăn..." th:value="${param.keyword}">
+        </form>
+    </div>
+    <div class="right-group">
+        <a th:href="@{/michelin/user/home/cart}" class="cart-icon">
+            <i class="fa-solid fa-cart-shopping fa-lg"></i>
+        </a>
+
+        <div class="user-menu">
+            <div th:if="${session.loggedInUser != null}" class="account-dropdown">
+                <a href="#" class="account-name">
+                    <i class="fa-solid fa-user"></i>
+                    <span th:text="${session.loggedInUser.name}">Tên người dùng</span>
+                    <i class="fa-solid fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/michelin/user/home/profile}">Thông tin cá nhân</a></li>
+                    <li><a th:href="@{/michelin/user/home/orders}">Đơn hàng</a></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Đăng xuất</a>
+                    </li>
+                </ul>
+            </div>
+            <a th:if="${session.loggedInUser == null}" href="/michelin/login" class="login-btn">Đăng nhập</a>
+        </div>
+    </div>
+</div>
+
+<!-- GIỎ HÀNG -->
+<div class="container">
+    <h2>Giỏ hàng của bạn</h2>
+
+    <div th:if="${#lists.isEmpty(cartItems)}">
+        <p style="text-align:center; font-size: 24px; color: gray;">Giỏ hàng đang trống</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(cartItems)}">
+        <div class="cart-wrapper">
+            <div style="flex: 1;">
+                <table>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Tạm tính</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="cart : ${cartItems}">
+                        <td><img th:src="@{'/image/' + ${cart.food.image}}" alt="Ảnh món"></td>
+                        <td th:text="${cart.food.nameFood}">Tên</td>
+                        <td th:text="${#numbers.formatInteger(cart.food.price, 0, 'COMMA')} + ' ₫'">149.000 ₫</td>
+                        <td>
+                            <div class="qty-control">
+                                <form th:action="@{/michelin/user/home/cart/update}" method="post">
+                                    <button type="submit" name="action" th:value="'decrease-' + ${cart.idCart}">-</button>
+                                </form>
+                                <input type="text" th:value="${cart.quantity}" readonly>
+                                <form th:action="@{/michelin/user/home/cart/update}" method="post">
+                                    <button type="submit" name="action" th:value="'increase-' + ${cart.idCart}">+</button>
+                                </form>
+                            </div>
+                        </td>
+                        <td th:text="${#numbers.formatInteger(cart.food.price * cart.quantity, 0, 'COMMA')} + ' ₫'">1.000.000 ₫</td>
+                        <td>
+                            <form th:action="@{/michelin/user/home/cart/remove/{idCart}(idCart=${cart.idCart})}" method="post">
+                                <button type="submit">×</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="actions">
+                    <a class="btn" href="/michelin/user/home">← Tiếp tục xem sản phẩm</a>
+                </div>
+            </div>
+            <div class="cart-summary">
+                <p><span>Tạm tính</span><span th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
+                <p><span>Phí dịch vụ</span><span th:text="${#numbers.formatInteger(serviceFee, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
+                <p><span>VAT</span><span th:text="${#numbers.formatInteger(vatFee, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
+                <p class="total"><span>Tổng</span><span th:text="${#numbers.formatInteger(grandTotal, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
+                <a href="/michelin/user/home/checkout" class="checkout-btn">THANH TOÁN</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

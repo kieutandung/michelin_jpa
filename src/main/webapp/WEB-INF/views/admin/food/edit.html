@@ -31,12 +31,17 @@
         }
 
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        select {
             width: 100%;
             padding: 10px;
             margin-bottom: 16px;
             border: 1px solid #ccc;
             border-radius: 4px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 16px;
         }
 
         input[type="submit"] {
@@ -67,6 +72,22 @@
         .back-link a:hover {
             text-decoration: underline;
         }
+
+        #imagePreviewContainer {
+            margin-top: 20px;
+            text-align: center;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -78,8 +99,20 @@
 
     <h2>Sửa sản phẩm</h2>
 
-    <form action="#" th:action="@{/michelin/home/save}" th:object="${food}" method="post" novalidate>
-        <input type="hidden" th:field="*{id}">
+    <form action="#" th:action="@{/michelin/home/save}" th:object="${food}" method="post" novalidate enctype="multipart/form-data">
+        <input type="hidden" th:field="*{idFood}">
+
+        <label for="image">Chọn ảnh</label>
+        <input type="file" id="image" name="imageFile" accept="image/*" onchange="previewImage(event)">
+
+        <div id="imagePreviewContainer" th:if="${food.image != null}" style="margin-top: 10px; display: block;">
+            <img id="imagePreview"
+                 th:src="@{'/image/' + ${food.image}}"
+                 alt="Ảnh món ăn"
+                 style="max-width: 100%; border-radius: 5px;"/>
+        </div>
+        <input type="hidden" name="oldImage" th:value="${food.image}" />
+
         <label for="nameFood">Tên sản phẩm</label>
         <input type="text" id="nameFood" th:field="*{nameFood}" placeholder="Nhập tên món ăn" required>
 
@@ -90,11 +123,35 @@
         <input type="number" id="quantity" th:field="*{quantity}" placeholder="Nhập số lượng" min="0" required>
 
         <label for="type">Loại</label>
-        <input type="text" id="type" th:field="*{type}" placeholder="Nhập loại đồ ăn" required>
+        <select id="type" th:field="*{type}" required>
+            <option value="Món_chính">Món chính</option>
+            <option value="Đồ_tráng_miệng">Đồ tráng miệng</option>
+            <option value="Món_phụ">Món phụ</option>
+            <option value="Đồ_uống">Đồ uống</option>
+        </select>
 
         <input type="submit" value="Lưu sản phẩm">
     </form>
 </div>
 
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('imagePreview');
+        const container = document.getElementById('imagePreviewContainer');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                container.style.display = 'block';
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+</script>
 </body>
 </html>

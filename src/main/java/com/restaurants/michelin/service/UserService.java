@@ -1,5 +1,9 @@
 package com.restaurants.michelin.service;
 
+import com.restaurants.michelin.model.User;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface UserService<T> {
@@ -8,4 +12,7 @@ public interface UserService<T> {
     void save(T t);
     T findById(Integer id);
     void delete(Integer id);
+    T findByName(String name);
+    void updateProfile(User user, MultipartFile avatar, HttpServletRequest request);
+
 }

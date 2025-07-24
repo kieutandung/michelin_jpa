@@ -7,30 +7,25 @@ import javax.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name, email , password ,role;
+    private Integer idUser;
+    private String name, email , password ,phone,image;
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('active', 'block')")
     private UserStatus status;
-
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('admin', 'user')")
+    private UserRole role;
+    private String confirmPassword;
+    private String address;
     public User() {
     }
 
-    public User(Integer id, String name, String email, String password, String role, UserStatus status) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.status = status;
+    public Integer getIdUser() {
+        return idUser;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdUser(Integer idUser) {
+        this.idUser = idUser;
     }
 
     public String getName() {
@@ -57,11 +52,11 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 
@@ -71,5 +66,37 @@ public class User {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
