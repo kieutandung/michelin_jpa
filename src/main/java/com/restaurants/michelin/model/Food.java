@@ -11,18 +11,16 @@ public class Food {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", columnDefinition = "ENUM('Món_chính', 'Đồ_tráng_miệng', 'Món_phụ', 'Đồ_uống')")
     private FoodType type;
+    @Enumerated(EnumType.STRING)
+    private FoodStatus status;
     @Column(name = "nameFood", nullable = false)
     private String nameFood;
-
     @Column(nullable = false)
     private int price;
-
     @Column(nullable = false)
     private int quantity;
-
     @Column(name = "image")
     private String image;
-
     public Food(Integer idFood, FoodType type, String nameFood, int price, int quantity) {
         this.idFood = idFood;
         this.type = type;
@@ -87,5 +85,13 @@ public class Food {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public FoodStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(FoodStatus status) {
+        this.status = status;
     }
 }

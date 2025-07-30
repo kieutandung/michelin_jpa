@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê doanh thu</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin/sidebar.css}">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background: #f5f5f5;
+        }
+
+        #main-content {
+            margin-left: 250px;
+            padding: 30px;
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s, width 0.3s;
+        }
+
+        #sidebar.collapsed + #main-content {
+            margin-left: 60px;
+            width: calc(100% - 60px);
+        }
+
+        .charts-wrapper {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .chart-container {
+            background: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .bar-chart {
+            flex: 0 0 80%;
+            margin: 0 auto;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+<div id="container" class="d-flex flex-column vh-100">
+    <!-- Sidebar -->
+    <div id="sidebar" class="collapsed">
+        <div id="toggle-btn" title="Thu nhỏ/Mở rộng menu">☰</div>
+        <nav>
+            <a th:href="@{/michelin/home/users}"><span class="icon"><i class="fas fa-user"></i></span><span class="text">Tài khoản</span></a>
+            <a th:href="@{/michelin/home}"><span class="icon"><i class="fas fa-utensils"></i></span><span class="text">Món ăn</span></a>
+            <a th:href="@{/michelin/home/order}"><span class="icon"><i class="fas fa-receipt"></i></span><span class="text">Đơn hàng</span></a>
+            <a th:href="@{/michelin/home/revenue}"><span class="icon"><i class="fas fa-chart-bar"></i></span><span class="text">Doanh thu</span></a>
+            <a class="logout-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <span class="icon"><i class="fas fa-sign-out-alt"></i></span><span class="text">Đăng xuất</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main content -->
+    <div id="main-content">
+        <h2>Thống kê Doanh Thu & Loại Món Ăn</h2>
+        <div class="charts-wrapper">
+            <div class="chart-container bar-chart">
+                <h4 class="text-center mb-4">Biểu đồ Doanh Thu Theo Tháng</h4>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoutModalLabel">Xác nhận đăng xuất</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn đăng xuất?
+            </div>
+            <div class="modal-footer">
+                <a th:href="@{/michelin/logout}" class="btn btn-danger">Đăng xuất</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const sidebar = document.getElementById('sidebar');
+    window.onload = () => sidebar.classList.add('collapsed');
+    document.getElementById('toggle-btn').onclick = () => sidebar.classList.toggle('collapsed');
+</script>
+
+<script th:inline="javascript">
+    const months = [[${months}]];
+    const revenues = [[${revenues}]];
+
+    new Chart(document.getElementById("revenueChart"), {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Doanh thu (VND)',
+                data: revenues,
+                fill: false,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.3,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#007bff',
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true }
+            },
+            scales: {
+                x: {
+                    display: false // Ẩn tháng
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value =>
+                            new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                            }).format(value)
+                    }
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>

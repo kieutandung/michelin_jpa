@@ -105,4 +105,9 @@ public class OrderServiceImpl implements OrderService {
     public Order getOrderById(Integer orderId) {
         return orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId));
     }
+    @Override
+    public List<Object[]> getMonthlyRevenue() {
+        return orderRepository.getMonthlyRevenue();
+    }
+
 }

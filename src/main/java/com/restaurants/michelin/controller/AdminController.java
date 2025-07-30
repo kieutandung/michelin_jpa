@@ -1,18 +1,17 @@
 package com.restaurants.michelin.controller;
 
 import com.restaurants.michelin.model.Food;
+import com.restaurants.michelin.model.FoodStatus;
 import com.restaurants.michelin.model.Order;
 import com.restaurants.michelin.model.User;
-import com.restaurants.michelin.service.FoodServiceImpl;
-import com.restaurants.michelin.service.OrderService;
-import com.restaurants.michelin.service.OrderServiceImpl;
-import com.restaurants.michelin.service.UserServiceImpl;
+import com.restaurants.michelin.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -20,11 +19,11 @@ import java.util.List;
 public class AdminController {
     @Autowired private FoodServiceImpl foodService;
     @Autowired private UserServiceImpl userService;
-    @Autowired
-    private OrderService orderService;
+    @Autowired private OrderService orderService;
+    @Autowired private OrderItemServiceImpl orderItemService;
     @GetMapping("")
     public String home(Model model){
-        model.addAttribute("foods", foodService.findAll());
+        model.addAttribute("foods", foodService.findAllByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán));
         return "/admin/food/homeAdmin";
     }
     @GetMapping("/add")
@@ -53,10 +52,11 @@ public class AdminController {
         return "/admin/food/edit";
     }
     @PostMapping("/{id}")
-    public String delete(@PathVariable Integer id){
-        foodService.delete(id);
+    public String delete(@PathVariable Integer id) {
+        foodService.markAsSoldOut(id); // đổi tên cho rõ nghĩa
         return "redirect:/michelin/home";
     }
+
 
     //user
     @GetMapping("/users")
@@ -107,4 +107,27 @@ public class AdminController {
         model.addAttribute("orders", orders);
         return "/admin/revenue/order";
     }
+    @GetMapping("/revenue")
+    public String showRevenueChart(Model model) {
+        List<Object[]> results = orderService.getMonthlyRevenue();
+
+        List<String> months = new ArrayList<>();
+        List<Double> revenues = new ArrayList<>();
+
+        for (Object[] row : results) {
+            String monthStr = (String) row[0];
+            Double revenue = row[1] != null ? ((Number) row[1]).doubleValue() : 0.0;
+            String[] parts = monthStr.split("-");
+            String formattedMonth = "Tháng " + Integer.parseInt(parts[1]) + "/" + parts[0];
+            months.add(formattedMonth);
+            revenues.add(revenue);
+        }
+
+        model.addAttribute("months", months);
+        model.addAttribute("revenues", revenues);
+        return "/admin/revenue/chart";
+    }
+
+
+
 }

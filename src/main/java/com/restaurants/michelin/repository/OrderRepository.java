@@ -12,4 +12,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findAllByUserWithItems(@Param("userId") Integer userId);
     List<Order> findAllByOrderByIdOrderDesc();
 
+    @Query("SELECT FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m') AS month, SUM(o.totalPrice) AS revenue " +
+            "FROM Order o WHERE o.status = 'Completed' " +
+            "GROUP BY FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m') " +
+            "ORDER BY FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m')")
+    List<Object[]> getMonthlyRevenue();
 }

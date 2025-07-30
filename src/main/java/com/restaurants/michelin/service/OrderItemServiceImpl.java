@@ -16,4 +16,5 @@ public class OrderItemServiceImpl implements OrderItemService<OrderItem> {
     public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
         return orderItemRepository.findByOrder_IdOrder(orderId);
     }
+
 }

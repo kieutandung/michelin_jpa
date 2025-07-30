@@ -14,4 +14,6 @@ public interface OrderService {
     List<Order> findAllByOrderByIdOrderDesc();
     void save(Order order);
     void cancelOrder(Integer orderId);
+    List<Object[]> getMonthlyRevenue();
+
 }
