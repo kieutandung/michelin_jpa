@@ -53,12 +53,10 @@ public class AdminController {
     }
     @PostMapping("/{id}")
     public String delete(@PathVariable Integer id) {
-        foodService.markAsSoldOut(id); // đổi tên cho rõ nghĩa
+        foodService.markAsSoldOut(id);
         return "redirect:/michelin/home";
     }
 
-
-    //user
     @GetMapping("/users")
     public String listUsers(Model model) {
         model.addAttribute("users", userService.findAll());
@@ -82,7 +80,6 @@ public class AdminController {
 
         return "redirect:/michelin/home/users";
     }
-
 
     @GetMapping("/users/{id}/edit")
     public String viewEditUser(@PathVariable Integer id, Model model) {

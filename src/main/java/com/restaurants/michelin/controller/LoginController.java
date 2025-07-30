@@ -35,19 +35,16 @@ public class LoginController {
             model.addAttribute("error", "Sai email hoặc mật khẩu.");
             return "/authenticate/login";
         }
-
         if (user.getStatus() != UserStatus.active) {
             model.addAttribute("error", "Tài khoản của bạn đã bị khóa hoặc chưa được kích hoạt.");
             return "/authenticate/login";
         }
-
         session.setAttribute("loggedInUser", user);
 
         return user.getRole() == UserRole.admin
                 ? "redirect:/michelin/home"
                 : "redirect:/michelin/user/home";
     }
-
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
