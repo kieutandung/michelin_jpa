@@ -415,7 +415,7 @@
     </nav>
 
     <div class="search-wrapper">
-        <form th:action="@{/michelin/user/home/search}" method="get" class="position-relative search-wrapper" style="max-width: 300px; width: 100%;">
+        <form th:action="@{/michelin/user/home/search/food}" method="get" class="position-relative search-wrapper" style="max-width: 300px; width: 100%;">
             <input type="text" name="keyword" class="form-control search-input" placeholder="Tìm món ăn..." th:value="${param.keyword}">
         </form>
     </div>

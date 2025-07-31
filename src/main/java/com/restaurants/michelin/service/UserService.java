@@ -1,6 +1,7 @@
 package com.restaurants.michelin.service;
 
 import com.restaurants.michelin.model.User;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,5 +15,6 @@ public interface UserService<T> {
     void delete(Integer id);
     T findByName(String name);
     void updateProfile(User user, MultipartFile avatar, HttpServletRequest request);
+    List<T> searchByName(String keyword);
 
 }

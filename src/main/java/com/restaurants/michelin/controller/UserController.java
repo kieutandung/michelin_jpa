@@ -38,7 +38,6 @@ public class UserController {
         if (user == null) {
             return "redirect:/michelin/login";
         }
-
         List<Cart> carts = cartService.findCartByUser(user);
         int totalPrice = carts.stream()
                 .filter(cart -> cart.getFood() != null)
@@ -61,12 +60,10 @@ public class UserController {
         if (user == null) {
             return "redirect:/michelin/login";
         }
-
         Food food = foodService.findById(idFood);
         if (food == null) {
             return "redirect:/michelin/user/home?error=foodNotFound";
         }
-
         Cart cart = cartService.findByUserAndFood(user, food);
         if (cart != null) {
             cart.setQuantity(cart.getQuantity() + 1);
@@ -78,10 +75,8 @@ public class UserController {
             newCart.setQuantity(1);
             cartService.save(newCart);
         }
-
         return "redirect:/michelin/user/home/cart";
     }
-
     @PostMapping("/cart/remove/{idCart}")
     public String removeCartItem(@PathVariable("idCart") Integer idCart, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -154,7 +149,6 @@ public class UserController {
         return "redirect:/michelin/user/home/orders";
     }
 
-
     @GetMapping("/orders")
     public String viewMyOrders(HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -175,7 +169,7 @@ public class UserController {
         return "/user/order/detail";
     }
 
-    @GetMapping ("/search")
+    @GetMapping ("/search/food")
     public String searchFood(@RequestParam("keyword") String keyword, Model model) {
         List<Food> foods = foodService.searchByName(keyword);
         model.addAttribute("foods", foods);
@@ -235,5 +229,11 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng.");
         }
         return "redirect:/michelin/user/home/orders";
+    }
+    @GetMapping("/search/user")
+    public String searchUser(@RequestParam("keyword") String keyword, Model model) {
+        List<User> users = userService.searchByName(keyword);
+        model.addAttribute("users", users);
+        return "/admin/account/list";
     }
 }
