@@ -277,6 +277,24 @@
                 </tr>
                 </tbody>
             </table>
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center mt-4">
+                    <li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item">
+                        <a class="page-link" th:href="@{/michelin/home/users(page=${currentPage - 1})}">&laquo;</a>
+                    </li>
+
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'" class="page-item">
+                        <a class="page-link" th:text="${i + 1}"
+                           th:href="@{/michelin/home/users(page=${i})}"></a>
+                    </li>
+
+                    <li th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'" class="page-item">
+                        <a class="page-link" th:href="@{/michelin/home/users(page=${currentPage + 1})}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+
         </div>
     </div>
 </div>

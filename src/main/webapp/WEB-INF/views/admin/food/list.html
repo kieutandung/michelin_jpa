@@ -175,6 +175,24 @@
             </tr>
             </tbody>
         </table>
+        <div class="mt-4 d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/michelin/home/food(page=${currentPage - 1}, size=${foods.size})}">Trước</a>
+                </li>
+
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/michelin/home/food(page=${i}, size=${foods.size})}" th:text="${i + 1}"></a>
+                </li>
+
+                <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/michelin/home/food(page=${currentPage + 1}, size=${foods.size})}">Sau</a>
+                </li>
+            </ul>
+        </div>
+
         <!-- Delete Modal -->
         <div th:each="food : ${foods}">
             <div class="modal fade" th:id="'deleteModal_' + ${food.idFood}" tabindex="-1" aria-hidden="true">

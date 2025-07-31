@@ -28,7 +28,7 @@ public class UserController {
     private UserServiceImpl userService;
     @GetMapping("")
     public String home(Model model){
-        model.addAttribute("foods", foodService.findAllByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán));
+        model.addAttribute("foods", foodService.findAllFoodByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán));
         return "/user/home/food";
     }
     @GetMapping("/cart")

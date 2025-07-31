@@ -97,8 +97,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="order,stat : ${orders}">
-                <td class="text-center" th:text="${stat.count}"></td>
+            <tr th:each="order, stat : ${orders}">
+                <td th:text="${stat.index + 1 + currentPage * 10}"></td>
                 <td th:text="${order.customerName}"></td>
                 <td th:text="${order.email}"></td>
                 <td class="text-center" th:text="${order.phone}"></td>
@@ -117,6 +117,29 @@
             </tr>
             </tbody>
         </table>
+        <div class="mt-4 d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/michelin/home/order(page=${currentPage - 1}, size=${orders.size})}">Trước</a>
+                </li>
+
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/michelin/home/order(page=${i}, size=${orders.size})}"
+                       th:text="${i + 1}"></a>
+                </li>
+
+                <li class="page-item" th:classappend="${currentPage + 1 == orders.totalPages} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/michelin/home/order(page=${currentPage + 1}, size=${orders.size})}">Sau</a>
+                </li>
+            </ul>
+        </div>
+
+
     </div>
 </div>
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">

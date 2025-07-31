@@ -1,6 +1,8 @@
 package com.restaurants.michelin.service;
 
 import com.restaurants.michelin.model.FoodStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -10,7 +12,8 @@ public interface FoodService<T> {
     T findById(Integer id);
     void delete(Integer id);
     List<T> searchByName(String keyword);
-    List<T> findAllByStatusOrderByIdFoodDesc(FoodStatus status);
+    Page<T> findAllByStatusOrderByIdFoodDesc(FoodStatus status, Pageable pageable);
     void markAsSoldOut(Integer id);
+    List<T> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status);
 
 }

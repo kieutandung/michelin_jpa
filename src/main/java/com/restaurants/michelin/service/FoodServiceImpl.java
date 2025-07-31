@@ -4,6 +4,8 @@ import com.restaurants.michelin.model.Food;
 import com.restaurants.michelin.model.FoodStatus;
 import com.restaurants.michelin.repository.FoodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,14 +40,19 @@ public class FoodServiceImpl implements FoodService<Food>{
     }
 
     @Override
-    public List<Food> findAllByStatusOrderByIdFoodDesc(FoodStatus status) {
-        return foodRepository.findAllByStatusOrderByIdFoodDesc(status);
+    public Page<Food> findAllByStatusOrderByIdFoodDesc(FoodStatus status, Pageable pageable) {
+        return foodRepository.findAllByStatusOrderByIdFoodDesc(status,pageable);
     }
     @Override
     public void markAsSoldOut(Integer id) {
         Food food = findById(id); // hoặc foodRepository.findById(id).orElseThrow(...)
         food.setStatus(FoodStatus.Hết_bán); // nếu bạn dùng enum
         foodRepository.save(food); // cập nhật lại
+    }
+
+    @Override
+    public List<Food> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status) {
+        return foodRepository.findAllFoodByStatusOrderByIdFoodDesc(status);
     }
 
 }
