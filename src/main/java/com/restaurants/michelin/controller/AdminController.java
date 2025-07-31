@@ -22,9 +22,13 @@ public class AdminController {
     @Autowired private OrderService orderService;
     @Autowired private OrderItemServiceImpl orderItemService;
     @GetMapping("")
-    public String home(Model model){
+    public String home(){
+        return "/admin/home";
+    }
+    @GetMapping("/food")
+    public String food(Model model){
         model.addAttribute("foods", foodService.findAllByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán));
-        return "/admin/food/homeAdmin";
+        return "/admin/food/list";
     }
     @GetMapping("/add")
     public String viewAddFood(Model model){
@@ -96,7 +100,7 @@ public class AdminController {
     public String searchFood(@RequestParam("keyword") String keyword, Model model) {
         List<Food> foods = foodService.searchByName(keyword);
         model.addAttribute("foods", foods);
-        return "/admin/food/homeAdmin";
+        return "list";
     }
     @GetMapping("/order")
     public String viewAllOrders(Model model) {
