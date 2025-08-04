@@ -1,67 +1,96 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Đăng nhập</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            background: url('/image/banner4.png') no-repeat center center fixed;
+            background-size: cover;
             height: 100vh;
+            display: flex;
+            justify-content: flex-end; /* Canh trái */
+            align-items: center;
+            margin-right: 210px;
         }
 
         .login-container {
-            background-color: white;
+            background: rgba(255, 255, 255, 0.3); /* Trong suốt hơn */
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            width: 350px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            width: 360px;
+            backdrop-filter: blur(8px); /* Làm mờ nền */
+            -webkit-backdrop-filter: blur(8px);
         }
 
         h2 {
             text-align: center;
             margin-bottom: 24px;
-            color: #333;
+            color: #fff;
         }
 
         label {
             display: block;
             margin-bottom: 6px;
-            font-weight: bold;
+            font-weight: 600;
+            color: #f0f0f0;
         }
 
         input[type="email"],
         input[type="password"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
         }
 
         button {
             width: 100%;
             padding: 12px;
-            background-color: #007bff;
+            background-color: #FF5722;
             border: none;
             color: white;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
+            font-weight: bold;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #e64a19;
         }
 
         .error {
             color: red;
             text-align: center;
             margin-top: 10px;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #FFEB3B;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -70,23 +99,20 @@
 <div class="login-container">
     <h2>Đăng nhập</h2>
     <form th:action="@{/michelin/home}" method="post">
-        <div>
-            <label>Email:</label>
-            <input type="email" name="email" required />
-        </div>
-        <div>
-            <label>Mật khẩu:</label>
-            <input type="password" name="password" required />
-        </div>
+        <label>Email:</label>
+        <input type="email" name="email" required />
+
+        <label>Mật khẩu:</label>
+        <input type="password" name="password" required />
+
         <button type="submit">Đăng nhập</button>
     </form>
 
-    <p style="text-align: center; margin-top: 15px;">
+    <p class="register-link">
         Chưa có tài khoản?
-        <a th:href="@{/michelin/register}" style="color: #007bff; text-decoration: none;">Đăng ký ngay</a>
+        <a th:href="@{/michelin/register}">Đăng ký ngay</a>
     </p>
 
-    <!-- Hiển thị lỗi -->
     <p th:if="${error}" th:text="${error}" class="error"></p>
 </div>
 
