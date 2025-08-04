@@ -50,4 +50,8 @@
             cartRepository.deleteByUser(user);
         }
 
+        public int countItemsInCart(User user) {
+            List<Cart> cartList = cartRepository.findByUser(user);
+            return cartList.stream().mapToInt(Cart::getQuantity).sum();
+        }
     }
