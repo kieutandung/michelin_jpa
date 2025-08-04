@@ -23,7 +23,6 @@ public class AdminController {
     @Autowired private FoodServiceImpl foodService;
     @Autowired private UserServiceImpl userService;
     @Autowired private OrderService orderService;
-    @Autowired private OrderItemServiceImpl orderItemService;
     @GetMapping("")
     public String home(){
         return "/admin/home";
@@ -59,7 +58,7 @@ public class AdminController {
         }
 
         foodService.save(food);
-        return "redirect:/michelin/home";
+        return "redirect:/michelin/home/food";
     }
 
     @GetMapping("/{id}/edit")
@@ -70,7 +69,7 @@ public class AdminController {
     @PostMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         foodService.markAsSoldOut(id);
-        return "redirect:/michelin/home";
+        return "redirect:/michelin/home/food";
     }
 
     @GetMapping("/users")
