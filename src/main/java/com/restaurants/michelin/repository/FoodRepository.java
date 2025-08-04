@@ -2,6 +2,8 @@ package com.restaurants.michelin.repository;
 
 import com.restaurants.michelin.model.Food;
 import com.restaurants.michelin.model.FoodStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,5 +17,6 @@ public interface FoodRepository extends JpaRepository<Food, Integer> {
             "ORDER BY f.idFood DESC")
     List<Food> searchByKeyword(@Param("keyword") String keyword);
 
-    List<Food> findAllByStatusOrderByIdFoodDesc(FoodStatus status);
+    Page<Food> findAllByStatusOrderByIdFoodDesc(FoodStatus status, Pageable pageable);
+    List<Food> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status);
 }

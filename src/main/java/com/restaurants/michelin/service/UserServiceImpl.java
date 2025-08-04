@@ -4,6 +4,8 @@ import com.restaurants.michelin.model.User;
 import com.restaurants.michelin.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UserServiceImpl implements UserService<User>{
+public class UserServiceImpl implements UserService{
     @Autowired
     UserRepository userRepository;
 
@@ -24,8 +26,8 @@ public class UserServiceImpl implements UserService<User>{
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.restaurants.michelin.repository.CartRepository;
 import com.restaurants.michelin.repository.OrderItemRepository;
 import com.restaurants.michelin.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,8 +82,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findAllByOrderByIdOrderDesc() {
-        return orderRepository.findAllByOrderByIdOrderDesc();
+    public Page<Order> findAllByOrderByIdOrderDesc(Pageable pageable) {
+        return orderRepository.findAllByOrderByIdOrderDesc(pageable);
     }
 
     @Override

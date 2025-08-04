@@ -6,6 +6,9 @@ import com.restaurants.michelin.model.Order;
 import com.restaurants.michelin.model.User;
 import com.restaurants.michelin.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +23,24 @@ public class AdminController {
     @Autowired private FoodServiceImpl foodService;
     @Autowired private UserServiceImpl userService;
     @Autowired private OrderService orderService;
-    @Autowired private OrderItemServiceImpl orderItemService;
     @GetMapping("")
-    public String home(Model model){
-        model.addAttribute("foods", foodService.findAllByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán));
-        return "/admin/food/homeAdmin";
+    public String home(){
+        return "/admin/home";
     }
+    @GetMapping("/food")
+    public String food(@RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "5") int size,
+                       Model model) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Food> foodPage = foodService.findAllByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán, pageable);
+
+        model.addAttribute("foods", foodPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", foodPage.getTotalPages());
+
+        return "/admin/food/list";
+    }
+
     @GetMapping("/add")
     public String viewAddFood(Model model){
         model.addAttribute("food" , new Food());
@@ -43,7 +58,7 @@ public class AdminController {
         }
 
         foodService.save(food);
-        return "redirect:/michelin/home";
+        return "redirect:/michelin/home/food";
     }
 
     @GetMapping("/{id}/edit")
@@ -54,14 +69,21 @@ public class AdminController {
     @PostMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         foodService.markAsSoldOut(id);
-        return "redirect:/michelin/home";
+        return "redirect:/michelin/home/food";
     }
 
     @GetMapping("/users")
-    public String listUsers(Model model) {
-        model.addAttribute("users", userService.findAll());
+    public String listUsers(Model model,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "5") int size) {
+
+        Page<User> userPage = userService.findAll(PageRequest.of(page, size));
+        model.addAttribute("users", userPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", userPage.getTotalPages());
         return "/admin/account/list";
     }
+
 
     @GetMapping("/users/add")
     public String viewAddUser(Model model) {
@@ -96,14 +118,17 @@ public class AdminController {
     public String searchFood(@RequestParam("keyword") String keyword, Model model) {
         List<Food> foods = foodService.searchByName(keyword);
         model.addAttribute("foods", foods);
-        return "/admin/food/homeAdmin";
+        return "/admin/food/list";
     }
     @GetMapping("/order")
-    public String viewAllOrders(Model model) {
-        List<Order> orders = orderService.findAllByOrderByIdOrderDesc();
+    public String viewAllOrders(@RequestParam(defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Order> orders = orderService.findAllByOrderByIdOrderDesc(pageable);
         model.addAttribute("orders", orders);
+        model.addAttribute("currentPage", page);
         return "/admin/revenue/order";
     }
+
     @GetMapping("/revenue")
     public String showRevenueChart(Model model) {
         List<Object[]> results = orderService.getMonthlyRevenue();
