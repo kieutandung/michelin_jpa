@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,10 +28,21 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
     @GetMapping("")
-    public String home(Model model){
+    public String home(Model model, HttpSession session) {
         model.addAttribute("foods", foodService.findAllFoodByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán));
+
+        // Lấy user từ session
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user != null) {
+            int cartCount = cartService.countItemsInCart(user); // Tổng số lượng sản phẩm
+            model.addAttribute("cartCount", cartCount);
+        } else {
+            model.addAttribute("cartCount", 0); // Không đăng nhập thì set = 0
+        }
+
         return "/user/home/food";
     }
+
     @GetMapping("/cart")
     public String cart(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -55,15 +67,18 @@ public class UserController {
         return "/user/home/cart";
     }
     @PostMapping("/add")
-    public String addToCart(@RequestParam("idFood") int idFood, HttpSession session) {
+    public String addToCart(@RequestParam("idFood") int idFood, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) {
             return "redirect:/michelin/login";
         }
+
         Food food = foodService.findById(idFood);
         if (food == null) {
-            return "redirect:/michelin/user/home?error=foodNotFound";
+            redirectAttributes.addFlashAttribute("error", "Món ăn không tồn tại.");
+            return "redirect:/michelin/user/home";
         }
+
         Cart cart = cartService.findByUserAndFood(user, food);
         if (cart != null) {
             cart.setQuantity(cart.getQuantity() + 1);
@@ -75,8 +90,11 @@ public class UserController {
             newCart.setQuantity(1);
             cartService.save(newCart);
         }
-        return "redirect:/michelin/user/home/cart";
+
+        redirectAttributes.addFlashAttribute("message", "Đã thêm vào giỏ hàng!");
+        return "redirect:/michelin/user/home";
     }
+
     @PostMapping("/cart/remove/{idCart}")
     public String removeCartItem(@PathVariable("idCart") Integer idCart, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -150,15 +168,32 @@ public class UserController {
     }
 
     @GetMapping("/orders")
-    public String viewMyOrders(HttpSession session, Model model) {
+    public String viewMyOrders(@RequestParam(value = "status", required = false) String status,
+                               HttpSession session,
+                               Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
             return "redirect:/michelin/login";
         }
-        List<Order> orders = orderService.getOrdersByUser(loggedInUser.getIdUser());
+
+        List<Order> orders;
+
+        if (status == null || status.isEmpty()) {
+            // Không có trạng thái -> lấy tất cả
+            orders = orderService.getOrdersByUser(loggedInUser.getIdUser());
+        } else {
+            try {
+                OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase()); // chuyển về chữ IN HOA
+                orders = orderService.getOrdersByUserAndStatus(loggedInUser.getIdUser(), orderStatus);
+            } catch (IllegalArgumentException e) {
+                orders = new ArrayList<>();
+            }
+        }
+
         model.addAttribute("orders", orders);
         return "/user/order/list";
     }
+
 
 
     @GetMapping("/order/{id}")

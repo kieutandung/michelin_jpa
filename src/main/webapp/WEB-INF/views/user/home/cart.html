@@ -324,9 +324,6 @@
         </form>
     </div>
     <div class="right-group">
-        <a th:href="@{/michelin/user/home/cart}" class="cart-icon">
-            <i class="fa-solid fa-cart-shopping fa-lg"></i>
-        </a>
 
         <div class="user-menu">
             <div th:if="${session.loggedInUser != null}" class="account-dropdown">
@@ -395,10 +392,6 @@
                     </tr>
                     </tbody>
                 </table>
-
-                <div class="actions">
-                    <a class="btn" href="/michelin/user/home">← Tiếp tục xem sản phẩm</a>
-                </div>
             </div>
             <div class="cart-summary">
                 <p><span>Tạm tính</span><span th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
