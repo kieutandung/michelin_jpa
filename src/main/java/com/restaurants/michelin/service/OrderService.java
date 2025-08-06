@@ -18,7 +18,7 @@ public interface OrderService {
     void save(Order order);
     void cancelOrder(Integer orderId);
     List<Object[]> getMonthlyRevenue();
-    List<Order> getOrdersByUserAndStatus(Integer idUser, OrderStatus status);
-
+    List<Order> getOrdersByUserId(Integer userId);
+    List<Order> getOrdersByUserIdAndStatus(Integer userId, OrderStatus status);
 
 }

@@ -11,6 +11,7 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user/home/cart.html" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user/home" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user/home/detail.html" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user/home" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user/home/food.html" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user/home" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user/order/list.html" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user/order" />
       </map>
     </option>
   </component>

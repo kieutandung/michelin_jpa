@@ -224,6 +224,7 @@ public class UserController {
     @GetMapping("/orders")
     public String viewMyOrders(@RequestParam(value = "status", required = false) String status,
                                HttpSession session,
+                               HttpServletRequest request,
                                Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
@@ -233,20 +234,27 @@ public class UserController {
         List<Order> orders;
 
         if (status == null || status.isEmpty()) {
-            // Không có trạng thái -> lấy tất cả
-            orders = orderService.getOrdersByUser(loggedInUser.getIdUser());
+            orders = orderService.getOrdersByUserId(loggedInUser.getIdUser());
         } else {
             try {
-                OrderStatus orderStatus = OrderStatus.valueOf(status); // Giữ nguyên case
-                orders = orderService.getOrdersByUserAndStatus(loggedInUser.getIdUser(), orderStatus);
+                OrderStatus orderStatus = OrderStatus.valueOf(status);
+                orders = orderService.getOrdersByUserIdAndStatus(loggedInUser.getIdUser(), orderStatus);
             } catch (IllegalArgumentException e) {
                 orders = new ArrayList<>();
             }
         }
 
         model.addAttribute("orders", orders);
-        return "/user/order/list";
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            // Trả về fragment đúng với trong thymeleaf, ví dụ fragment id = order-container trong file user/order/list.html
+            return "/user/order/list :: #order-container";
+        }
+
+        return "/user/order/list"; // Trả nguyên trang nếu không phải AJAX
     }
+
+
 
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable("id") Integer id, Model model,HttpSession session) {
