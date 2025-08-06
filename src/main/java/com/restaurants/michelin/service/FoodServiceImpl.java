@@ -67,4 +67,8 @@ public class FoodServiceImpl implements FoodService<Food>{
                 .map(row -> (Food) row[0])
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<Food> getDiscountedFoods() {
+        return foodRepository.findTop5ByDiscountGreaterThanAndStatusOrderByDiscountDesc(0, FoodStatus.Còn_bán);
+    }
 }

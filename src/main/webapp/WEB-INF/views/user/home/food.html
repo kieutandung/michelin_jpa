@@ -293,42 +293,6 @@
             background-color: #e64a19;
         }
 
-        /* ========== FOOTER ========== */
-        .footer {
-            background-color: #000000;
-            color: white;
-            padding: 20px 40px;
-            margin-top: 50px;
-        }
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .footer-logo {
-            height: 40px;
-            margin-bottom: 10px;
-        }
-        .footer-left p {
-            margin: 0;
-            font-size: 14px;
-        }
-        .footer-right {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .footer-right a {
-            color: #ccc;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s;
-        }
-        .footer-right a:hover {
-            color: #ffd700;
-        }
-
         /* ========== RESPONSIVE ========== */
         @media (max-width: 1200px) {
             .card-container {
@@ -396,28 +360,164 @@
             color: #842029;
         }
 
-        .cart-icon {
-            position: relative;
-            display: inline-block;
+        /* ========== ƯU ĐÃI ========== */
+        .discounted-products {
+            padding: 30px 40px;
         }
 
-        .cart-icon i {
-            font-size: 22px;
-            color: #fff; /* hoặc #000 tùy nền */
-        }
-
-        .cart-icon .badge {
-            position: absolute;
-            top: -8px;
-            background-color: red;
-            color: white;
+        .discounted-products .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
             font-weight: bold;
-            padding: 2px 8px;
-            font-size: 12px;
-            border-radius: 20px;
-            line-height: 1;
         }
 
+        /* Giữ nguyên grid giống best-sellers */
+        .discounted-products .card-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px;
+            justify-items: start;
+        }
+
+        .discounted-products .card {
+            position: relative; /* Để đặt .discount-badge */
+            width: 100%;
+            max-width: 200px;
+            height: 270px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .discounted-products .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .discounted-products .card img {
+            width: 100%;
+            height: 50%;
+            object-fit: cover;
+            background-color: white;
+        }
+
+        .discounted-products .card-content {
+            height: 50%;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .discounted-products .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .discounted-products .card-price {
+            color: #e91e63;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* Button như cũ */
+        .discounted-products form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .discounted-products form button:hover {
+            background-color: #e64a19;
+        }
+
+        /* ======= Miếng dán giảm giá ======= */
+        .discount-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: #f44336;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 6px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+
+        .footer {
+            background: #222;
+            color: #eee;
+            padding: 40px 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-column {
+            flex: 1 1 220px;
+            min-width: 200px;
+        }
+
+        .footer-column h3,
+        .footer-column h4 {
+            color: #ff6347;
+            margin-bottom: 15px;
+        }
+
+        .footer-column p,
+        .footer-column ul {
+            margin: 0;
+            line-height: 1.8;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-column a {
+            color: #eee;
+            text-decoration: none;
+        }
+
+        .footer-column a:hover {
+            text-decoration: underline;
+        }
+
+        .social-icons a {
+            margin-right: 15px;
+            font-size: 18px;
+            color: #eee;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 13px;
+            color: #999;
+            margin-top: 30px;
+        }
 
     </style>
 </head>
@@ -470,7 +570,7 @@
                     <li><a th:href="@{/michelin/user/home/profile}">Thông tin cá nhân</a></li>
                     <li><a th:href="@{/michelin/user/home/orders}">Đơn hàng</a></li>
                     <li>
-                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Đăng xuất</a>
+                        <a class="dropdown-item text-danger" th:href="@{/michelin/logout}">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -508,37 +608,91 @@
         </div>
     </div>
 </div>
+<div class="discounted-products">
+    <div class="section-title">Ưu đãi</div>
+    <div class="card-container">
+        <div class="card" th:each="food : ${discountedFoods}">
+            <div class="discount-badge" th:if="${food.discount > 0}"
+                 th:text="'-' + ${food.discount} + '%'"></div>
 
-<!-- Modal xác nhận đăng xuất -->
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="logoutModalLabel">Xác nhận đăng xuất</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn muốn đăng xuất không?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <a th:href="@{/michelin/logout}" class="btn btn-danger">Đăng xuất</a>
+            <img th:src="@{'/image/' + ${food.image}}" alt="food image"/>
+            <div class="card-content">
+                <div class="card-title" th:text="${food.nameFood}">Tên món ăn</div>
+
+                <div class="card-price">
+                    <span th:if="${food.discount > 0}" style="color:red; font-weight:bold;"
+                          th:text="${#numbers.formatDecimal(food.price * (100 - food.discount) / 100, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                    </span>
+                    <span th:if="${food.discount > 0}" style="text-decoration: line-through; color: gray; margin-left: 5px;"
+                          th:text="${#numbers.formatDecimal(food.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                    </span>
+                    <span th:if="${food.discount == 0}"
+                          th:text="${#numbers.formatDecimal(food.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                    </span>
+                </div>
+
+                <form th:action="@{/michelin/user/home/add}" method="post">
+                    <input type="hidden" name="idFood" th:value="${food.idFood}" />
+                    <button type="submit">Thêm vào giỏ hàng</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+
 <footer class="footer">
     <div class="footer-container">
-        <div class="footer-left">
-            <p>© 2025 Michelin. All rights reserved.</p>
+        <!-- Giới thiệu -->
+        <div class="footer-column">
+            <h3>Michelin Restaurant</h3>
+            <p>Chuyên cung cấp các món ăn ngon, chất lượng và dịch vụ tận tâm.</p>
+            <p>Địa chỉ: 123 Đường Ẩm Thực, Q1, TP. HCM</p>
+            <p>Điện thoại: <a href="tel:+84123456789">(+84) 123 456 789</a></p>
+            <p>Email: <a href="mailto:info@michelin.com">info@michelin.com</a></p>
         </div>
-        <div class="footer-right">
-            <a href="#">Về chúng tôi</a>
-            <a href="#">Chính sách bảo mật</a>
-            <a href="#">Liên hệ</a>
+
+        <!-- Liên kết nhanh -->
+        <div class="footer-column">
+            <h4>Liên kết nhanh</h4>
+            <ul>
+                <li><a href="#">Trang chủ</a></li>
+                <li><a href="#">Thực đơn</a></li>
+                <li><a href="#">Giỏ hàng</a></li>
+                <li><a href="#">Đơn hàng</a></li>
+                <li><a href="#">Hỗ trợ</a></li>
+            </ul>
+        </div>
+
+        <!-- Chính sách -->
+        <div class="footer-column">
+            <h4>Chính sách & Hỗ trợ</h4>
+            <ul>
+                <li><a href="#">Chính sách bảo mật</a></li>
+                <li><a href="#">Điều khoản sử dụng</a></li>
+                <li><a href="#">Chính sách đổi trả</a></li>
+                <li><a href="#">Liên hệ hỗ trợ</a></li>
+            </ul>
+        </div>
+
+        <!-- Mạng xã hội -->
+        <div class="footer-column">
+            <h4>Kết nối với chúng tôi</h4>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
         </div>
     </div>
+
+    <div class="footer-bottom">
+        © 2025 Michelin. All rights reserved. Designed by You.
+    </div>
 </footer>
+
+
 
 <script>
     const slider = document.getElementById("mainSlider");

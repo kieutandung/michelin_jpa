@@ -30,6 +30,7 @@ public class UserController {
     @GetMapping("")
     public String home(Model model, HttpSession session) {
         model.addAttribute("foods", foodService.getTop5BestSellingFoods());
+        model.addAttribute("discountedFoods", foodService.getDiscountedFoods());
 
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("cartCount", user != null ? cartService.countItemsInCart(user) : 0);

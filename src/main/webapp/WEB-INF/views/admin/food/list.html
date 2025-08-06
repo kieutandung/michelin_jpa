@@ -147,6 +147,7 @@
                 <th>Loại</th>
                 <th>Giá</th>
                 <th>Số lượng</th>
+                <th>Ưu đãi</th>
                 <th>Hành động</th>
             </tr>
             </thead>
@@ -158,6 +159,7 @@
                 <td th:text="${#strings.replace(food.type, '_', ' ')}"></td>
                 <td th:text="${food.price}"></td>
                 <td th:text="${food.quantity}"></td>
+                <td th:text="${food.discount} + '%'"></td>
                 <td>
                     <div class="d-flex justify-content-center gap-2">
                         <form th:action="@{'/michelin/home/' + ${food.idFood} + '/edit'}" method="get">

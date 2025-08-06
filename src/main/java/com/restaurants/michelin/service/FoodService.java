@@ -15,5 +15,7 @@ public interface FoodService<T> {
     Page<T> findAllByStatusOrderByIdFoodDesc(FoodStatus status, Pageable pageable);
     void markAsSoldOut(Integer id);
     List<T> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status);
+    List<T> getDiscountedFoods();
+
 
 }

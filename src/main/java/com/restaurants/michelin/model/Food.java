@@ -21,6 +21,8 @@ public class Food {
     private int quantity;
     @Column(name = "image")
     private String image;
+    @Column(name = "discount")
+    private int discount;
     public Food(Integer idFood, FoodType type, String nameFood, int price, int quantity) {
         this.idFood = idFood;
         this.type = type;
@@ -35,8 +37,27 @@ public class Food {
         this.quantity = quantity;
     }
 
+    public Food(Integer idFood, FoodType type, FoodStatus status, String nameFood, int price, int quantity, String image, int discount) {
+        this.idFood = idFood;
+        this.type = type;
+        this.status = status;
+        this.nameFood = nameFood;
+        this.price = price;
+        this.quantity = quantity;
+        this.image = image;
+        this.discount = discount;
+    }
+
     public Food() {
 
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
     }
 
     public Integer getIdFood() {
