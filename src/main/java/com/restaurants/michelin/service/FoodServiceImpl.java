@@ -56,9 +56,11 @@ public class FoodServiceImpl implements FoodService<Food>{
     }
 
     @Override
-    public List<Food> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status) {
-        return foodRepository.findAllFoodByStatusOrderByIdFoodDesc(status);
+    public Page<Food> findByStatusAndDiscountOrderByIdFoodDesc(FoodStatus status, int discount, Pageable pageable) {
+        return foodRepository.findByStatusAndDiscountOrderByIdFoodDesc(status,discount,pageable);
     }
+
+
     public List<Food> getTop5BestSellingFoods() {
         Pageable topFive = PageRequest.of(0, 5);
         List<Object[]> result = orderItemRepository.findTopBestSellingFoods(topFive);

@@ -2,6 +2,8 @@ package com.restaurants.michelin.controller;
 import com.restaurants.michelin.model.*;
 import com.restaurants.michelin.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -325,37 +327,31 @@ public class UserController {
         return "/admin/account/list";
     }
     @GetMapping("/menu")
-    public String menu(@RequestParam(value = "keyword", required = false) String keyword,
+    public String menu(@RequestParam(value = "page", defaultValue = "0") int page,
                        Model model,
                        HttpSession session) {
-        List<Food> foods;
+        int pageSize = 15;
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            foods = foodService.searchByName(keyword);
-            model.addAttribute("keyword", keyword); // ✅ Gửi lại keyword để hiển thị
-        } else {
-            foods = foodService.findAllFoodByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán);
-        }
+        // Lấy món còn bán và không có ưu đãi
+        Page<Food> foodPage = foodService.findByStatusAndDiscountOrderByIdFoodDesc(
+                FoodStatus.Còn_bán, 0, PageRequest.of(page, pageSize)
+        );
 
-        model.addAttribute("menu", foods);
+        model.addAttribute("menu", foodPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", foodPage.getTotalPages());
 
-        // Lấy user từ session
         User user = (User) session.getAttribute("loggedInUser");
-        if (user != null) {
-            int cartCount = cartService.countItemsInCart(user);
-            model.addAttribute("cartCount", cartCount);
-        } else {
-            model.addAttribute("cartCount", 0);
-        }
+        model.addAttribute("cartCount", user != null ? cartService.countItemsInCart(user) : 0);
 
         return "/user/home/menu";
     }
+
+
     @GetMapping("/discounted")
     public String discounted(Model model) {
         List<Food> discountedFoods = foodService.findAllDiscountedFoods(); // Đã lọc còn bán
         model.addAttribute("discountedFoods", discountedFoods);
         return "/user/home/discounted";
     }
-
-
 }

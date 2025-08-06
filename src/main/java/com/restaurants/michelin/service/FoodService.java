@@ -15,7 +15,6 @@ public interface FoodService<T> {
     List<T> searchByName(String keyword);
     Page<T> findAllByStatusOrderByIdFoodDesc(FoodStatus status, Pageable pageable);
     void markAsSoldOut(Integer id);
-    List<T> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status);
-    List<T> getDiscountedFoods();
-    List<Food> findAllDiscountedFoods();
+    Page<T> findByStatusAndDiscountOrderByIdFoodDesc(FoodStatus status, int discount, Pageable pageable);    List<T> getDiscountedFoods();
+    List<T> findAllDiscountedFoods();
 }
