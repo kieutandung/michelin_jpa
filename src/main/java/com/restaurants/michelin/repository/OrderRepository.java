@@ -21,7 +21,11 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "GROUP BY FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m') " +
             "ORDER BY FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m')")
     List<Object[]> getMonthlyRevenue();
-    List<Order> findByUser_IdUserAndStatus(Integer idUser, OrderStatus status);
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems WHERE o.user.idUser = :userId")
+    List<Order> findByUserId(@Param("userId") Integer userId);
+
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems WHERE o.user.idUser = :userId AND o.status = :status")
+    List<Order> findByUserIdAndStatus(@Param("userId") Integer userId, @Param("status") OrderStatus status);
 
 
 

@@ -523,6 +523,30 @@
         </div>
     </div>
 </div>
+<div class="mt-4 d-flex justify-content-center">
+    <ul class="pagination">
+        <!-- Nút Trước -->
+        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+            <a class="page-link" th:href="@{/michelin/user/home/menu(page=${currentPage - 1})}">&laquo; Trước</a>
+        </li>
+
+        <!-- Các trang -->
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${i == currentPage} ? 'active'">
+            <a class="page-link"
+               th:href="@{/michelin/user/home/menu(page=${i})}"
+               th:text="${i + 1}">1</a>
+        </li>
+
+        <!-- Nút Sau -->
+        <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+            <a class="page-link" th:href="@{/michelin/user/home/menu(page=${currentPage + 1})}">Sau &raquo;</a>
+        </li>
+    </ul>
+</div>
+
+
 <footer class="footer">
     <div class="footer-container">
         <!-- Giới thiệu -->

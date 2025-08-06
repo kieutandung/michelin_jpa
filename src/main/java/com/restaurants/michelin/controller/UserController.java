@@ -2,6 +2,8 @@ package com.restaurants.michelin.controller;
 import com.restaurants.michelin.model.*;
 import com.restaurants.michelin.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -224,6 +226,7 @@ public class UserController {
     @GetMapping("/orders")
     public String viewMyOrders(@RequestParam(value = "status", required = false) String status,
                                HttpSession session,
+                               HttpServletRequest request,
                                Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
@@ -233,20 +236,28 @@ public class UserController {
         List<Order> orders;
 
         if (status == null || status.isEmpty()) {
-            // Không có trạng thái -> lấy tất cả
-            orders = orderService.getOrdersByUser(loggedInUser.getIdUser());
+            orders = orderService.getOrdersByUserId(loggedInUser.getIdUser());
         } else {
             try {
-                OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase()); // chuyển về chữ IN HOA
-                orders = orderService.getOrdersByUserAndStatus(loggedInUser.getIdUser(), orderStatus);
+                OrderStatus orderStatus = OrderStatus.valueOf(status);
+                orders = orderService.getOrdersByUserIdAndStatus(loggedInUser.getIdUser(), orderStatus);
             } catch (IllegalArgumentException e) {
                 orders = new ArrayList<>();
             }
         }
 
         model.addAttribute("orders", orders);
-        return "/user/order/list";
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            // Trả về fragment đúng với trong thymeleaf, ví dụ fragment id = order-container trong file user/order/list.html
+            return "/user/order/list :: #order-container";
+        }
+
+        return "/user/order/list"; // Trả nguyên trang nếu không phải AJAX
     }
+
+
+
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable("id") Integer id, Model model,HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -316,37 +327,31 @@ public class UserController {
         return "/admin/account/list";
     }
     @GetMapping("/menu")
-    public String menu(@RequestParam(value = "keyword", required = false) String keyword,
+    public String menu(@RequestParam(value = "page", defaultValue = "0") int page,
                        Model model,
                        HttpSession session) {
-        List<Food> foods;
+        int pageSize = 15;
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            foods = foodService.searchByName(keyword);
-            model.addAttribute("keyword", keyword); // ✅ Gửi lại keyword để hiển thị
-        } else {
-            foods = foodService.findAllFoodByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán);
-        }
+        // Lấy món còn bán và không có ưu đãi
+        Page<Food> foodPage = foodService.findByStatusAndDiscountOrderByIdFoodDesc(
+                FoodStatus.Còn_bán, 0, PageRequest.of(page, pageSize)
+        );
 
-        model.addAttribute("menu", foods);
+        model.addAttribute("menu", foodPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", foodPage.getTotalPages());
 
-        // Lấy user từ session
         User user = (User) session.getAttribute("loggedInUser");
-        if (user != null) {
-            int cartCount = cartService.countItemsInCart(user);
-            model.addAttribute("cartCount", cartCount);
-        } else {
-            model.addAttribute("cartCount", 0);
-        }
+        model.addAttribute("cartCount", user != null ? cartService.countItemsInCart(user) : 0);
 
         return "/user/home/menu";
     }
+
+
     @GetMapping("/discounted")
     public String discounted(Model model) {
         List<Food> discountedFoods = foodService.findAllDiscountedFoods(); // Đã lọc còn bán
         model.addAttribute("discountedFoods", discountedFoods);
         return "/user/home/discounted";
     }
-
-
 }
