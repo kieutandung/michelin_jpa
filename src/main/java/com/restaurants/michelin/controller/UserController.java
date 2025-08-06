@@ -44,13 +44,21 @@ public class UserController {
         if (user == null) {
             return "redirect:/michelin/login";
         }
+
         List<Cart> carts = cartService.findCartByUser(user);
+
         int totalPrice = carts.stream()
                 .filter(cart -> cart.getFood() != null)
-                .mapToInt(cart -> cart.getFood().getPrice() * cart.getQuantity())
+                .mapToInt(cart -> {
+                    int price = cart.getFood().getPrice();
+                    int discount = cart.getFood().getDiscount();
+                    int finalPrice = (discount > 0) ? price * (100 - discount) / 100 : price;
+                    return finalPrice * cart.getQuantity();
+                })
                 .sum();
-        int serviceFee = totalPrice / 20;
-        int vatFee = (int)(totalPrice * 0.084);
+
+        int serviceFee = totalPrice / 20; // 5%
+        int vatFee = (int)(totalPrice * 0.084); // 8.4%
         int grandTotal = totalPrice + serviceFee + vatFee;
 
         model.addAttribute("cartItems", carts);
@@ -58,8 +66,10 @@ public class UserController {
         model.addAttribute("serviceFee", serviceFee);
         model.addAttribute("vatFee", vatFee);
         model.addAttribute("grandTotal", grandTotal);
+
         return "/user/home/cart";
     }
+
     @PostMapping("/add")
     public String addToCart(@RequestParam("idFood") int idFood, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -175,10 +185,16 @@ public class UserController {
 
         int totalPrice = carts.stream()
                 .filter(cart -> cart.getFood() != null)
-                .mapToInt(cart -> cart.getFood().getPrice() * cart.getQuantity())
+                .mapToInt(cart -> {
+                    int price = cart.getFood().getPrice();
+                    int discount = cart.getFood().getDiscount();
+                    int finalPrice = (discount > 0) ? price * (100 - discount) / 100 : price;
+                    return finalPrice * cart.getQuantity();
+                })
                 .sum();
-        int serviceFee = totalPrice / 20;
-        int vatFee = (int)(totalPrice * 0.084);
+
+        int serviceFee = totalPrice / 20; // 5%
+        int vatFee = (int)(totalPrice * 0.084); // 8.4%
         int grandTotal = totalPrice + serviceFee + vatFee;
 
         model.addAttribute("user", user);
@@ -190,6 +206,7 @@ public class UserController {
 
         return "/user/home/checkout";
     }
+
     @PostMapping("/checkout")
     public String checkout(HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -204,8 +221,6 @@ public class UserController {
         // Chuyển về trang chủ
         return "redirect:/michelin/user/home";
     }
-
-
     @GetMapping("/orders")
     public String viewMyOrders(@RequestParam(value = "status", required = false) String status,
                                HttpSession session,
@@ -232,9 +247,6 @@ public class UserController {
         model.addAttribute("orders", orders);
         return "/user/order/list";
     }
-
-
-
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable("id") Integer id, Model model,HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -242,13 +254,6 @@ public class UserController {
         model.addAttribute("order", order);
         return "/user/order/detail";
     }
-
-//    @GetMapping ("/search/food")
-//    public String searchFood(@RequestParam("keyword") String keyword, Model model) {
-//        List<Food> foods = foodService.searchByName(keyword);
-//        model.addAttribute("foods", foods);
-//        return "/user/home/food";
-//    }
     @GetMapping("/profile")
     public String userProfile(HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");

@@ -458,9 +458,22 @@
                     </thead>
                     <tbody>
                     <tr th:each="cart : ${cartItems}">
-                        <td><img th:src="@{'/image/' + ${cart.food.image}}" alt="Ảnh món"></td>
+                        <td>
+                            <img th:src="@{'/image/' + ${cart.food.image}}" alt="Ảnh món">
+                        </td>
                         <td th:text="${cart.food.nameFood}">Tên</td>
-                        <td th:text="${#numbers.formatInteger(cart.food.price, 0, 'COMMA')} + ' ₫'">149.000 ₫</td>
+
+                        <!-- Giá hiển thị -->
+                        <td>
+        <span th:if="${cart.food.discount > 0}"
+              th:text="${#numbers.formatInteger(cart.food.price * (100 - cart.food.discount) / 100, 0, 'COMMA')} + ' ₫'"
+              style="color: red; font-weight: bold;"></span>
+
+                            <span th:unless="${cart.food.discount > 0}"
+                                  th:text="${#numbers.formatInteger(cart.food.price, 0, 'COMMA')} + ' ₫'"></span>
+                        </td>
+
+                        <!-- Điều khiển số lượng -->
                         <td>
                             <div class="qty-control">
                                 <form th:action="@{/michelin/user/home/cart/update}" method="post">
@@ -472,7 +485,19 @@
                                 </form>
                             </div>
                         </td>
-                        <td th:text="${#numbers.formatInteger(cart.food.price * cart.quantity, 0, 'COMMA')} + ' ₫'">1.000.000 ₫</td>
+
+                        <!-- Tạm tính -->
+                        <td>
+        <span th:if="${cart.food.discount > 0}"
+              th:text="${#numbers.formatInteger((cart.food.price * (100 - cart.food.discount) / 100) * cart.quantity, 0, 'COMMA')} + ' ₫'">
+        </span>
+
+                            <span th:unless="${cart.food.discount > 0}"
+                                  th:text="${#numbers.formatInteger(cart.food.price * cart.quantity, 0, 'COMMA')} + ' ₫'">
+        </span>
+                        </td>
+
+                        <!-- Xóa -->
                         <td>
                             <form th:action="@{/michelin/user/home/cart/remove/{idCart}(idCart=${cart.idCart})}" method="post">
                                 <button type="submit">×</button>
@@ -482,11 +507,25 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Phần tổng kết giỏ hàng -->
             <div class="cart-summary">
-                <p><span>Tạm tính</span><span th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
-                <p><span>Phí dịch vụ</span><span th:text="${#numbers.formatInteger(serviceFee, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
-                <p><span>VAT</span><span th:text="${#numbers.formatInteger(vatFee, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
-                <p class="total"><span>Tổng</span><span th:text="${#numbers.formatInteger(grandTotal, 0, 'COMMA')} + ' ₫'">0 ₫</span></p>
+                <p>
+                    <span>Tạm tính</span>
+                    <span th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + ' ₫'">0 ₫</span>
+                </p>
+                <p>
+                    <span>Phí dịch vụ</span>
+                    <span th:text="${#numbers.formatInteger(serviceFee, 0, 'COMMA')} + ' ₫'">0 ₫</span>
+                </p>
+                <p>
+                    <span>VAT</span>
+                    <span th:text="${#numbers.formatInteger(vatFee, 0, 'COMMA')} + ' ₫'">0 ₫</span>
+                </p>
+                <p class="total">
+                    <span>Tổng</span>
+                    <span th:text="${#numbers.formatInteger(grandTotal, 0, 'COMMA')} + ' ₫'">0 ₫</span>
+                </p>
                 <a href="/michelin/user/home/checkout" class="checkout-btn">THANH TOÁN</a>
             </div>
         </div>
