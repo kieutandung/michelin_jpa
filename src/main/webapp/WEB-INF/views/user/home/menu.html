@@ -403,7 +403,7 @@
 
         .cart-icon i {
             font-size: 22px;
-            color: #fff; /* hoặc #000 tùy nền */
+            color: #fff;
         }
 
         .cart-icon .badge {
@@ -417,8 +417,6 @@
             border-radius: 20px;
             line-height: 1;
         }
-
-
     </style>
 </head>
 <body>
@@ -449,8 +447,6 @@
             <input type="text" name="keyword" class="form-control search-input" placeholder="Tìm món ăn..." th:value="${param.keyword}">
         </form>
     </div>
-
-
     <div class="right-group">
         <a th:href="@{/michelin/user/home/cart}" class="cart-icon position-relative">
             <i class="fa-solid fa-cart-shopping fa-lg"></i>
@@ -478,24 +474,16 @@
         </div>
     </div>
 </div>
-
-<div class="banner-container">
-    <div class="banner-large">
-        <div class="slider" id="mainSlider">
-            <img src="/image/banner3.png" alt="Banner 1">
-            <img src="/image/banner5.png" alt="Banner 2">
-        </div>
-    </div>
-    <div class="banner-small">
-        <img src="/image/banner1.png" alt="Small Top">
-        <img src="/image/banner2.png" alt="Small Bottom">
-    </div>
+<div th:if="${keyword != null and !#strings.isEmpty(keyword)}"
+     style="margin-top: 50px; margin-left: 50px;">
+    <p>Kết quả tìm kiếm cho từ khoá: "<strong th:text="${keyword}"></strong>"</p>
 </div>
 
+
 <div class="best-sellers">
-    <div class="section-title">Bán chạy</div>
+    <div class="section-title">Thực đơn</div>
     <div class="card-container">
-        <div class="card" th:each="food : ${foods}">
+        <div class="card" th:each="food : ${menu}">
             <img th:src="@{'/image/' + ${food.image}}" alt="food image"/>
             <div class="card-content">
                 <div class="card-title" th:text="${food.nameFood}">Tên món ăn</div>

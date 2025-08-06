@@ -3,17 +3,22 @@ package com.restaurants.michelin.service;
 import com.restaurants.michelin.model.Food;
 import com.restaurants.michelin.model.FoodStatus;
 import com.restaurants.michelin.repository.FoodRepository;
+import com.restaurants.michelin.repository.OrderItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FoodServiceImpl implements FoodService<Food>{
     @Autowired
     FoodRepository foodRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
     @Override
     public List<Food> findAll() {
         return foodRepository.findAll();
@@ -54,5 +59,12 @@ public class FoodServiceImpl implements FoodService<Food>{
     public List<Food> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status) {
         return foodRepository.findAllFoodByStatusOrderByIdFoodDesc(status);
     }
+    public List<Food> getTop5BestSellingFoods() {
+        Pageable topFive = PageRequest.of(0, 5);
+        List<Object[]> result = orderItemRepository.findTopBestSellingFoods(topFive);
 
+        return result.stream()
+                .map(row -> (Food) row[0])
+                .collect(Collectors.toList());
+    }
 }
