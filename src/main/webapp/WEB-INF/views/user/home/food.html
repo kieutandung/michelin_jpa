@@ -432,13 +432,10 @@
         <span th:text="${message}">Thêm vào giỏ hàng thành công!</span>
     </div>
 
-    <div th:if="${error}" class="toast-message toast-error">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <span th:text="${error}">Đã có lỗi xảy ra!</span>
+    <div th:if="${orderSuccess}" class="toast-message toast-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <span th:text="${orderSuccess}">Đặt hàng thành công!</span>
     </div>
-
-
-
     <nav class="nav-links">
         <a th:href="@{/michelin/user/home}">Trang chủ</a>
         <a href="#">Ưu đãi</a>
@@ -563,7 +560,7 @@
     });
 
     // Chuyển slide mỗi 5 giây
-    setInterval(nextSlide, 5000);
+    setInterval(nextSlide, 3000);
 </script>
 <script>
     setTimeout(function () {

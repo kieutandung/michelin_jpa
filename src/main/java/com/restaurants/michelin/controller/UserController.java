@@ -159,13 +159,20 @@ public class UserController {
         return "/user/home/checkout";
     }
     @PostMapping("/checkout")
-    public String checkout(HttpSession session) {
+    public String checkout(HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) return "redirect:/michelin/login";
 
+        // Gọi xử lý đặt hàng
         orderService.placeOrder(user);
-        return "redirect:/michelin/user/home/orders";
+
+        // Gửi thông báo về Home sau khi redirect
+        redirectAttributes.addFlashAttribute("orderSuccess", "Đặt hàng thành công!");
+
+        // Chuyển về trang chủ
+        return "redirect:/michelin/user/home";
     }
+
 
     @GetMapping("/orders")
     public String viewMyOrders(@RequestParam(value = "status", required = false) String status,
