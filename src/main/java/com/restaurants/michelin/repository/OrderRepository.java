@@ -23,6 +23,4 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Object[]> getMonthlyRevenue();
     List<Order> findByUser_IdUserAndStatus(Integer idUser, OrderStatus status);
 
-
-
 }

@@ -237,7 +237,7 @@ public class UserController {
             orders = orderService.getOrdersByUser(loggedInUser.getIdUser());
         } else {
             try {
-                OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase()); // chuyển về chữ IN HOA
+                OrderStatus orderStatus = OrderStatus.valueOf(status); // Giữ nguyên case
                 orders = orderService.getOrdersByUserAndStatus(loggedInUser.getIdUser(), orderStatus);
             } catch (IllegalArgumentException e) {
                 orders = new ArrayList<>();
@@ -247,6 +247,7 @@ public class UserController {
         model.addAttribute("orders", orders);
         return "/user/order/list";
     }
+
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable("id") Integer id, Model model,HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
