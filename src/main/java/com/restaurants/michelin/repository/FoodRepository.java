@@ -20,5 +20,6 @@ public interface FoodRepository extends JpaRepository<Food, Integer> {
     Page<Food> findAllByStatusOrderByIdFoodDesc(FoodStatus status, Pageable pageable);
     List<Food> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status);
     List<Food> findTop5ByDiscountGreaterThanAndStatusOrderByDiscountDesc(int discount, FoodStatus status);
+    List<Food> findByDiscountGreaterThanAndStatus(int discount, FoodStatus status);
 
 }

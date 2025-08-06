@@ -1,5 +1,6 @@
 package com.restaurants.michelin.service;
 
+import com.restaurants.michelin.model.Food;
 import com.restaurants.michelin.model.FoodStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,5 @@ public interface FoodService<T> {
     void markAsSoldOut(Integer id);
     List<T> findAllFoodByStatusOrderByIdFoodDesc(FoodStatus status);
     List<T> getDiscountedFoods();
-
-
+    List<Food> findAllDiscountedFoods();
 }

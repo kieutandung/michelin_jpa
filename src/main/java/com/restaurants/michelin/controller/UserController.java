@@ -336,5 +336,12 @@ public class UserController {
 
         return "/user/home/menu";
     }
+    @GetMapping("/discounted")
+    public String discounted(Model model) {
+        List<Food> discountedFoods = foodService.findAllDiscountedFoods(); // Đã lọc còn bán
+        model.addAttribute("discountedFoods", discountedFoods);
+        return "/user/home/discounted";
+    }
+
 
 }

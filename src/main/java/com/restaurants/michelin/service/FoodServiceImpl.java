@@ -71,4 +71,9 @@ public class FoodServiceImpl implements FoodService<Food>{
     public List<Food> getDiscountedFoods() {
         return foodRepository.findTop5ByDiscountGreaterThanAndStatusOrderByDiscountDesc(0, FoodStatus.Còn_bán);
     }
+    @Override
+    public List<Food> findAllDiscountedFoods() {
+        return foodRepository.findByDiscountGreaterThanAndStatus(0, FoodStatus.Còn_bán);
+    }
+
 }
