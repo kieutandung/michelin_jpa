@@ -29,20 +29,14 @@ public class UserController {
     private UserServiceImpl userService;
     @GetMapping("")
     public String home(Model model, HttpSession session) {
-        model.addAttribute("foods", foodService.findAllFoodByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán));
+        model.addAttribute("foods", foodService.getTop5BestSellingFoods());
+        model.addAttribute("discountedFoods", foodService.getDiscountedFoods());
 
-        // Lấy user từ session
         User user = (User) session.getAttribute("loggedInUser");
-        if (user != null) {
-            int cartCount = cartService.countItemsInCart(user); // Tổng số lượng sản phẩm
-            model.addAttribute("cartCount", cartCount);
-        } else {
-            model.addAttribute("cartCount", 0); // Không đăng nhập thì set = 0
-        }
+        model.addAttribute("cartCount", user != null ? cartService.countItemsInCart(user) : 0);
 
         return "/user/home/food";
     }
-
     @GetMapping("/cart")
     public String cart(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -50,13 +44,21 @@ public class UserController {
         if (user == null) {
             return "redirect:/michelin/login";
         }
+
         List<Cart> carts = cartService.findCartByUser(user);
+
         int totalPrice = carts.stream()
                 .filter(cart -> cart.getFood() != null)
-                .mapToInt(cart -> cart.getFood().getPrice() * cart.getQuantity())
+                .mapToInt(cart -> {
+                    int price = cart.getFood().getPrice();
+                    int discount = cart.getFood().getDiscount();
+                    int finalPrice = (discount > 0) ? price * (100 - discount) / 100 : price;
+                    return finalPrice * cart.getQuantity();
+                })
                 .sum();
-        int serviceFee = totalPrice / 20;
-        int vatFee = (int)(totalPrice * 0.084);
+
+        int serviceFee = totalPrice / 20; // 5%
+        int vatFee = (int)(totalPrice * 0.084); // 8.4%
         int grandTotal = totalPrice + serviceFee + vatFee;
 
         model.addAttribute("cartItems", carts);
@@ -64,8 +66,10 @@ public class UserController {
         model.addAttribute("serviceFee", serviceFee);
         model.addAttribute("vatFee", vatFee);
         model.addAttribute("grandTotal", grandTotal);
+
         return "/user/home/cart";
     }
+
     @PostMapping("/add")
     public String addToCart(@RequestParam("idFood") int idFood, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -181,10 +185,16 @@ public class UserController {
 
         int totalPrice = carts.stream()
                 .filter(cart -> cart.getFood() != null)
-                .mapToInt(cart -> cart.getFood().getPrice() * cart.getQuantity())
+                .mapToInt(cart -> {
+                    int price = cart.getFood().getPrice();
+                    int discount = cart.getFood().getDiscount();
+                    int finalPrice = (discount > 0) ? price * (100 - discount) / 100 : price;
+                    return finalPrice * cart.getQuantity();
+                })
                 .sum();
-        int serviceFee = totalPrice / 20;
-        int vatFee = (int)(totalPrice * 0.084);
+
+        int serviceFee = totalPrice / 20; // 5%
+        int vatFee = (int)(totalPrice * 0.084); // 8.4%
         int grandTotal = totalPrice + serviceFee + vatFee;
 
         model.addAttribute("user", user);
@@ -196,6 +206,7 @@ public class UserController {
 
         return "/user/home/checkout";
     }
+
     @PostMapping("/checkout")
     public String checkout(HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -210,8 +221,6 @@ public class UserController {
         // Chuyển về trang chủ
         return "redirect:/michelin/user/home";
     }
-
-
     @GetMapping("/orders")
     public String viewMyOrders(@RequestParam(value = "status", required = false) String status,
                                HttpSession session,
@@ -238,22 +247,12 @@ public class UserController {
         model.addAttribute("orders", orders);
         return "/user/order/list";
     }
-
-
-
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable("id") Integer id, Model model,HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
         Order order = orderService.findById(id);
         model.addAttribute("order", order);
         return "/user/order/detail";
-    }
-
-    @GetMapping ("/search/food")
-    public String searchFood(@RequestParam("keyword") String keyword, Model model) {
-        List<Food> foods = foodService.searchByName(keyword);
-        model.addAttribute("foods", foods);
-        return "/user/home/food";
     }
     @GetMapping("/profile")
     public String userProfile(HttpSession session, Model model) {
@@ -316,4 +315,38 @@ public class UserController {
         model.addAttribute("users", users);
         return "/admin/account/list";
     }
+    @GetMapping("/menu")
+    public String menu(@RequestParam(value = "keyword", required = false) String keyword,
+                       Model model,
+                       HttpSession session) {
+        List<Food> foods;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            foods = foodService.searchByName(keyword);
+            model.addAttribute("keyword", keyword); // ✅ Gửi lại keyword để hiển thị
+        } else {
+            foods = foodService.findAllFoodByStatusOrderByIdFoodDesc(FoodStatus.Còn_bán);
+        }
+
+        model.addAttribute("menu", foods);
+
+        // Lấy user từ session
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user != null) {
+            int cartCount = cartService.countItemsInCart(user);
+            model.addAttribute("cartCount", cartCount);
+        } else {
+            model.addAttribute("cartCount", 0);
+        }
+
+        return "/user/home/menu";
+    }
+    @GetMapping("/discounted")
+    public String discounted(Model model) {
+        List<Food> discountedFoods = foodService.findAllDiscountedFoods(); // Đã lọc còn bán
+        model.addAttribute("discountedFoods", discountedFoods);
+        return "/user/home/discounted";
+    }
+
+
 }

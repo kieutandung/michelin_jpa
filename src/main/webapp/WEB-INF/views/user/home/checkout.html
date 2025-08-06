@@ -238,8 +238,8 @@
 
     <nav class="nav-links">
         <a th:href="@{/michelin/user/home}">Trang chủ</a>
-        <a href="#">Giới thiệu</a>
-        <a href="#">Thực đơn</a>
+        <a href="#">Ưu đãi</a>
+        <a th:href="@{/michelin/user/home/menu}">Thực đơn</a>
         <a href="#">Tin tức</a>
         <a href="#">Liên hệ</a>
     </nav>
@@ -301,7 +301,7 @@
                         <span th:text="${item.food.nameFood}"></span> ×
                         <span th:text="${item.quantity}"></span>
                     </td>
-                    <td th:text="${#numbers.formatInteger(item.food.price * item.quantity, 0, 'POINT')} + ' đ'"></td>
+                    <td th:text="${#numbers.formatInteger((item.food.price * (100 - item.food.discount) / 100) * item.quantity, 0, 'POINT')} + ' đ'"></td>
                 </tr>
                 </tbody>
                 <tfoot>

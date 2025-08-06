@@ -293,6 +293,7 @@
             background-color: #e64a19;
         }
 
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 1200px) {
             .card-container {
@@ -360,103 +361,27 @@
             color: #842029;
         }
 
-        /* ========== ƯU ĐÃI ========== */
-        .discounted-products {
-            padding: 30px 40px;
+        .cart-icon {
+            position: relative;
+            display: inline-block;
         }
 
-        .discounted-products .section-title {
-            font-size: 24px;
-            margin-bottom: 20px;
-            font-weight: bold;
+        .cart-icon i {
+            font-size: 22px;
+            color: #fff;
         }
 
-        /* Giữ nguyên grid giống best-sellers */
-        .discounted-products .card-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 25px;
-            justify-items: start;
-        }
-
-        .discounted-products .card {
-            position: relative; /* Để đặt .discount-badge */
-            width: 100%;
-            max-width: 200px;
-            height: 270px;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease;
-        }
-
-        .discounted-products .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .discounted-products .card img {
-            width: 100%;
-            height: 50%;
-            object-fit: cover;
-            background-color: white;
-        }
-
-        .discounted-products .card-content {
-            height: 50%;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .discounted-products .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .discounted-products .card-price {
-            color: #e91e63;
-            font-weight: bold;
-            font-size: 15px;
-        }
-
-        /* Button như cũ */
-        .discounted-products form button {
-            width: 100%;
-            padding: 10px;
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .discounted-products form button:hover {
-            background-color: #e64a19;
-        }
-
-        /* ======= Miếng dán giảm giá ======= */
-        .discount-badge {
+        .cart-icon .badge {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            background-color: #f44336;
+            top: -8px;
+            background-color: red;
             color: white;
-            font-size: 12px;
             font-weight: bold;
-            padding: 4px 6px;
-            border-radius: 4px;
-            z-index: 10;
+            padding: 2px 8px;
+            font-size: 12px;
+            border-radius: 20px;
+            line-height: 1;
         }
-
-
         .footer {
             background: #222;
             color: #eee;
@@ -549,8 +474,6 @@
             <input type="text" name="keyword" class="form-control search-input" placeholder="Tìm món ăn..." th:value="${param.keyword}">
         </form>
     </div>
-
-
     <div class="right-group">
         <a th:href="@{/michelin/user/home/cart}" class="cart-icon position-relative">
             <i class="fa-solid fa-cart-shopping fa-lg"></i>
@@ -578,24 +501,16 @@
         </div>
     </div>
 </div>
-
-<div class="banner-container">
-    <div class="banner-large">
-        <div class="slider" id="mainSlider">
-            <img src="/image/banner3.png" alt="Banner 1">
-            <img src="/image/banner5.png" alt="Banner 2">
-        </div>
-    </div>
-    <div class="banner-small">
-        <img src="/image/banner1.png" alt="Small Top">
-        <img src="/image/banner2.png" alt="Small Bottom">
-    </div>
+<div th:if="${keyword != null and !#strings.isEmpty(keyword)}"
+     style="margin-top: 50px; margin-left: 50px;">
+    <p>Kết quả tìm kiếm cho từ khoá: "<strong th:text="${keyword}"></strong>"</p>
 </div>
 
+
 <div class="best-sellers">
-    <div class="section-title">Bán chạy</div>
+    <div class="section-title">Thực đơn</div>
     <div class="card-container">
-        <div class="card" th:each="food : ${foods}">
+        <div class="card" th:each="food : ${menu}">
             <img th:src="@{'/image/' + ${food.image}}" alt="food image"/>
             <div class="card-content">
                 <div class="card-title" th:text="${food.nameFood}">Tên món ăn</div>
@@ -608,39 +523,6 @@
         </div>
     </div>
 </div>
-<div class="discounted-products">
-    <div class="section-title">Ưu đãi</div>
-    <div class="card-container">
-        <div class="card" th:each="food : ${discountedFoods}">
-            <div class="discount-badge" th:if="${food.discount > 0}"
-                 th:text="'-' + ${food.discount} + '%'"></div>
-
-            <img th:src="@{'/image/' + ${food.image}}" alt="food image"/>
-            <div class="card-content">
-                <div class="card-title" th:text="${food.nameFood}">Tên món ăn</div>
-
-                <div class="card-price">
-                    <span th:if="${food.discount > 0}" style="color:red; font-weight:bold;"
-                          th:text="${#numbers.formatDecimal(food.price * (100 - food.discount) / 100, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
-                    </span>
-                    <span th:if="${food.discount > 0}" style="text-decoration: line-through; color: gray; margin-left: 5px;"
-                          th:text="${#numbers.formatDecimal(food.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
-                    </span>
-                    <span th:if="${food.discount == 0}"
-                          th:text="${#numbers.formatDecimal(food.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
-                    </span>
-                </div>
-
-                <form th:action="@{/michelin/user/home/add}" method="post">
-                    <input type="hidden" name="idFood" th:value="${food.idFood}" />
-                    <button type="submit">Thêm vào giỏ hàng</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <footer class="footer">
     <div class="footer-container">
         <!-- Giới thiệu -->
@@ -691,8 +573,6 @@
         © 2025 Michelin. All rights reserved. Designed by You.
     </div>
 </footer>
-
-
 
 <script>
     const slider = document.getElementById("mainSlider");

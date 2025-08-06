@@ -293,6 +293,7 @@
             background-color: #e64a19;
         }
 
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 1200px) {
             .card-container {
@@ -360,6 +361,88 @@
             color: #842029;
         }
 
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+        }
+
+        .cart-icon i {
+            font-size: 22px;
+            color: #fff;
+        }
+
+        .cart-icon .badge {
+            position: absolute;
+            top: -8px;
+            background-color: red;
+            color: white;
+            font-weight: bold;
+            padding: 2px 8px;
+            font-size: 12px;
+            border-radius: 20px;
+            line-height: 1;
+        }
+        .footer {
+            background: #222;
+            color: #eee;
+            padding: 40px 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-column {
+            flex: 1 1 220px;
+            min-width: 200px;
+        }
+
+        .footer-column h3,
+        .footer-column h4 {
+            color: #ff6347;
+            margin-bottom: 15px;
+        }
+
+        .footer-column p,
+        .footer-column ul {
+            margin: 0;
+            line-height: 1.8;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-column a {
+            color: #eee;
+            text-decoration: none;
+        }
+
+        .footer-column a:hover {
+            text-decoration: underline;
+        }
+
+        .social-icons a {
+            margin-right: 15px;
+            font-size: 18px;
+            color: #eee;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 13px;
+            color: #999;
+            margin-top: 30px;
+        }
         /* ========== ƯU ĐÃI ========== */
         .discounted-products {
             padding: 30px 40px;
@@ -456,69 +539,6 @@
             z-index: 10;
         }
 
-
-        .footer {
-            background: #222;
-            color: #eee;
-            padding: 40px 20px;
-            font-family: Arial, sans-serif;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 40px;
-        }
-
-        .footer-column {
-            flex: 1 1 220px;
-            min-width: 200px;
-        }
-
-        .footer-column h3,
-        .footer-column h4 {
-            color: #ff6347;
-            margin-bottom: 15px;
-        }
-
-        .footer-column p,
-        .footer-column ul {
-            margin: 0;
-            line-height: 1.8;
-        }
-
-        .footer-column ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-column a {
-            color: #eee;
-            text-decoration: none;
-        }
-
-        .footer-column a:hover {
-            text-decoration: underline;
-        }
-
-        .social-icons a {
-            margin-right: 15px;
-            font-size: 18px;
-            color: #eee;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #444;
-            font-size: 13px;
-            color: #999;
-            margin-top: 30px;
-        }
-
     </style>
 </head>
 <body>
@@ -549,8 +569,6 @@
             <input type="text" name="keyword" class="form-control search-input" placeholder="Tìm món ăn..." th:value="${param.keyword}">
         </form>
     </div>
-
-
     <div class="right-group">
         <a th:href="@{/michelin/user/home/cart}" class="cart-icon position-relative">
             <i class="fa-solid fa-cart-shopping fa-lg"></i>
@@ -578,36 +596,12 @@
         </div>
     </div>
 </div>
-
-<div class="banner-container">
-    <div class="banner-large">
-        <div class="slider" id="mainSlider">
-            <img src="/image/banner3.png" alt="Banner 1">
-            <img src="/image/banner5.png" alt="Banner 2">
-        </div>
-    </div>
-    <div class="banner-small">
-        <img src="/image/banner1.png" alt="Small Top">
-        <img src="/image/banner2.png" alt="Small Bottom">
-    </div>
+<div th:if="${keyword != null and !#strings.isEmpty(keyword)}"
+     style="margin-top: 50px; margin-left: 50px;">
+    <p>Kết quả tìm kiếm cho từ khoá: "<strong th:text="${keyword}"></strong>"</p>
 </div>
 
-<div class="best-sellers">
-    <div class="section-title">Bán chạy</div>
-    <div class="card-container">
-        <div class="card" th:each="food : ${foods}">
-            <img th:src="@{'/image/' + ${food.image}}" alt="food image"/>
-            <div class="card-content">
-                <div class="card-title" th:text="${food.nameFood}">Tên món ăn</div>
-                <div class="card-price" th:text="${#numbers.formatDecimal(food.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></div>
-                <form th:action="@{/michelin/user/home/add}" method="post">
-                    <input type="hidden" name="idFood" th:value="${food.idFood}" />
-                    <button type="submit">Thêm vào giỏ hàng</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
 <div class="discounted-products">
     <div class="section-title">Ưu đãi</div>
     <div class="card-container">
@@ -639,7 +633,6 @@
         </div>
     </div>
 </div>
-
 
 <footer class="footer">
     <div class="footer-container">
@@ -691,8 +684,6 @@
         © 2025 Michelin. All rights reserved. Designed by You.
     </div>
 </footer>
-
-
 
 <script>
     const slider = document.getElementById("mainSlider");
