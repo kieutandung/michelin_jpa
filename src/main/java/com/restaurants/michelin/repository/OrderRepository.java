@@ -1,6 +1,8 @@
 package com.restaurants.michelin.repository;
 
 import com.restaurants.michelin.model.Order;
+import com.restaurants.michelin.model.OrderStatus;
+import com.restaurants.michelin.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +21,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "GROUP BY FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m') " +
             "ORDER BY FUNCTION('DATE_FORMAT', o.orderDate, '%Y-%m')")
     List<Object[]> getMonthlyRevenue();
+    List<Order> findByUser_IdUserAndStatus(Integer idUser, OrderStatus status);
+
+
+
 }

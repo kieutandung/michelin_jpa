@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -167,15 +168,32 @@ public class UserController {
     }
 
     @GetMapping("/orders")
-    public String viewMyOrders(HttpSession session, Model model) {
+    public String viewMyOrders(@RequestParam(value = "status", required = false) String status,
+                               HttpSession session,
+                               Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
             return "redirect:/michelin/login";
         }
-        List<Order> orders = orderService.getOrdersByUser(loggedInUser.getIdUser());
+
+        List<Order> orders;
+
+        if (status == null || status.isEmpty()) {
+            // Không có trạng thái -> lấy tất cả
+            orders = orderService.getOrdersByUser(loggedInUser.getIdUser());
+        } else {
+            try {
+                OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase()); // chuyển về chữ IN HOA
+                orders = orderService.getOrdersByUserAndStatus(loggedInUser.getIdUser(), orderStatus);
+            } catch (IllegalArgumentException e) {
+                orders = new ArrayList<>();
+            }
+        }
+
         model.addAttribute("orders", orders);
         return "/user/order/list";
     }
+
 
 
     @GetMapping("/order/{id}")

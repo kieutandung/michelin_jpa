@@ -1,6 +1,7 @@
 package com.restaurants.michelin.service;
 
 import com.restaurants.michelin.model.Order;
+import com.restaurants.michelin.model.OrderStatus;
 import com.restaurants.michelin.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,5 +18,7 @@ public interface OrderService {
     void save(Order order);
     void cancelOrder(Integer orderId);
     List<Object[]> getMonthlyRevenue();
+    List<Order> getOrdersByUserAndStatus(Integer idUser, OrderStatus status);
+
 
 }

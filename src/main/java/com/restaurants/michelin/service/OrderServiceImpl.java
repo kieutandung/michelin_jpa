@@ -111,5 +111,8 @@ public class OrderServiceImpl implements OrderService {
     public List<Object[]> getMonthlyRevenue() {
         return orderRepository.getMonthlyRevenue();
     }
-
+    @Override
+    public List<Order> getOrdersByUserAndStatus(Integer idUser, OrderStatus status) {
+        return orderRepository.findByUser_IdUserAndStatus(idUser, status);
+    }
 }
