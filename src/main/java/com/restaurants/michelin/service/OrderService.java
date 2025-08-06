@@ -1,7 +1,10 @@
 package com.restaurants.michelin.service;
 
 import com.restaurants.michelin.model.Order;
+import com.restaurants.michelin.model.OrderStatus;
 import com.restaurants.michelin.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,9 +14,11 @@ public interface OrderService {
     Order getOrderById(Integer orderId);
     List<Order> getAllOrders();
     Order findById(Integer orderId);
-    List<Order> findAllByOrderByIdOrderDesc();
+    Page<Order> findAllByOrderByIdOrderDesc(Pageable pageable);
     void save(Order order);
     void cancelOrder(Integer orderId);
     List<Object[]> getMonthlyRevenue();
+    List<Order> getOrdersByUserAndStatus(Integer idUser, OrderStatus status);
+
 
 }

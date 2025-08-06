@@ -14,4 +14,5 @@ public interface CartService<T> {
     void updateQuantity(Integer idCart, int newQuantity);
     T getCartByIdCart(Integer idCart);
     void deleteAllCartByUser(User user);
+    int countItemsInCart(User user);
 }
