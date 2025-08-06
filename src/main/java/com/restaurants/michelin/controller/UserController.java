@@ -79,6 +79,11 @@ public class UserController {
             return "redirect:/michelin/user/home";
         }
 
+        if (food.getQuantity() <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Món ăn đã hết hàng!");
+            return "redirect:/michelin/user/home";
+        }
+
         Cart cart = cartService.findByUserAndFood(user, food);
         if (cart != null) {
             cart.setQuantity(cart.getQuantity() + 1);
@@ -91,22 +96,43 @@ public class UserController {
             cartService.save(newCart);
         }
 
+        // ✅ Giảm số lượng tồn kho
+        food.setQuantity(food.getQuantity() - 1);
+        foodService.save(food);
+
         redirectAttributes.addFlashAttribute("message", "Đã thêm vào giỏ hàng!");
         return "redirect:/michelin/user/home";
     }
+
 
     @PostMapping("/cart/remove/{idCart}")
     public String removeCartItem(@PathVariable("idCart") Integer idCart, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) {
-            return "redirect:/login";
+            return "redirect:/michelin/login";
         }
-        cartService.removeItemFromCart(idCart, user);
+
+        Cart cart = cartService.getCartByIdCart(idCart);
+        if (cart != null && cart.getUser().getIdUser().equals(user.getIdUser())) {
+            int qtyToReturn = cart.getQuantity();
+            Food food = cart.getFood();
+
+            // ✅ Trả lại hàng tồn kho
+            if (food != null) {
+                food.setQuantity(food.getQuantity() + qtyToReturn);
+                foodService.save(food);
+            }
+
+            cartService.removeItemFromCart(idCart, user);
+        }
+
         return "redirect:/michelin/user/home/cart";
     }
+
     @PostMapping("/cart/update")
     public String updateCart(@RequestParam("action") String action,
-                             HttpSession session) {
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) {
             return "redirect:/michelin/login";
@@ -120,12 +146,24 @@ public class UserController {
             Cart cart = cartService.getCartByIdCart(idCart);
             if (cart != null && cart.getUser().getIdUser().equals(user.getIdUser())) {
                 int currentQty = cart.getQuantity();
+                Food food = cart.getFood();
 
-                if ("increase".equals(command)) {
-                    cartService.updateQuantity(idCart, currentQty + 1);
-                } else if ("decrease".equals(command)) {
-                    if (currentQty > 1) {
-                        cartService.updateQuantity(idCart, currentQty - 1);
+                if (food != null) {
+                    if ("increase".equals(command)) {
+                        if (food.getQuantity() > 0) {
+                            cartService.updateQuantity(idCart, currentQty + 1);
+                            food.setQuantity(food.getQuantity() - 1); // ✅ Trừ kho
+                            foodService.save(food);
+                        } else {
+                            // ✅ Thêm thông báo hết hàng
+                            redirectAttributes.addFlashAttribute("error", "Sản phẩm đã hết hàng !");
+                        }
+                    } else if ("decrease".equals(command)) {
+                        if (currentQty > 1) {
+                            cartService.updateQuantity(idCart, currentQty - 1);
+                            food.setQuantity(food.getQuantity() + 1); // ✅ Trả kho
+                            foodService.save(food);
+                        }
                     }
                 }
             }
