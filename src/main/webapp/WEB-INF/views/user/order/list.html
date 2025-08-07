@@ -253,7 +253,7 @@
         <div class="user-menu">
             <div th:if="${session.loggedInUser != null}" class="account-dropdown">
                 <a href="#" class="account-name">
-                    <i class="bi bi-person-circle"></i>
+                    <i class="fa-solid fa-user"></i>
                     <span th:text="${session.loggedInUser.name}">Tên người dùng</span>
                     <i class="bi bi-caret-down-fill"></i>
                 </a>
@@ -302,19 +302,14 @@
                                 <strong th:text="${order.orderDate.format(T(java.time.format.DateTimeFormatter).ofPattern('dd/MM/yyyy HH:mm:ss'))}">--</strong>
                             </span>
                         </div>
-                        <span th:text="${order.status.name()}"
-                              th:if="${order.status.name() == 'Delivering'}"
-                              class="badge bg-primary">
+                        <span th:switch="${order.status.name()}">
+    <span th:case="'Delivering'" class="badge bg-primary">Đang giao</span>
+    <span th:case="'Completed'" class="badge bg-success">Hoàn tất</span>
+    <span th:case="*"
+          class="badge bg-danger"
+          th:text="${order.status.name() == 'Cancelled' ? 'Đã hủy' : (order.status.name() == 'Pending' ? 'Chờ xác nhận' : 'Khác')}">
+    </span>
 </span>
-                        <span th:text="${order.status.name()}"
-                              th:if="${order.status.name() == 'Completed'}"
-                              class="badge bg-success">
-</span>
-                        <span th:text="${order.status.name()}"
-                              th:if="${order.status.name() != 'Delivering' and order.status.name() != 'Completed'}"
-                              class="badge bg-danger">
-</span>
-
                     </div>
                     <!-- Danh sách món -->
                     <div th:each="item : ${order.orderItems}" class="order-items-border">

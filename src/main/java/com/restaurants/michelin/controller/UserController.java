@@ -328,15 +328,24 @@ public class UserController {
     }
     @GetMapping("/menu")
     public String menu(@RequestParam(value = "page", defaultValue = "0") int page,
+                       @RequestParam(value = "keyword", required = false) String keyword,
                        Model model,
                        HttpSession session) {
+
         int pageSize = 15;
+        Page<Food> foodPage;
 
-        // Lấy món còn bán và không có ưu đãi
-        Page<Food> foodPage = foodService.findByStatusAndDiscountOrderByIdFoodDesc(
-                FoodStatus.Còn_bán, 0, PageRequest.of(page, pageSize)
-        );
-
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            // Tìm kiếm theo tên món ăn có chứa keyword
+            foodPage = foodService.searchFoodByKeywordAndStatusAndDiscount(
+                    keyword.trim(), FoodStatus.Còn_bán, 0, PageRequest.of(page, pageSize));
+            model.addAttribute("keyword", keyword); // để hiển thị lại keyword trên ô input
+        } else {
+            // Không có keyword thì lấy toàn bộ món còn bán, không có ưu đãi
+            foodPage = foodService.findByStatusAndDiscountOrderByIdFoodDesc(
+                    FoodStatus.Còn_bán, 0, PageRequest.of(page, pageSize));
+        }
+        model.addAttribute("keyword", keyword);
         model.addAttribute("menu", foodPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", foodPage.getTotalPages());
@@ -348,10 +357,18 @@ public class UserController {
     }
 
 
+
     @GetMapping("/discounted")
-    public String discounted(Model model) {
-        List<Food> discountedFoods = foodService.findAllDiscountedFoods(); // Đã lọc còn bán
+    public String discounted(Model model, HttpSession session) {
+        List<Food> discountedFoods = foodService.findAllDiscountedFoods();
         model.addAttribute("discountedFoods", discountedFoods);
+
+        // Thêm cartCount để hiển thị badge
+        User user = (User) session.getAttribute("loggedInUser");
+        int cartCount = (user != null) ? cartService.countItemsInCart(user) : 0;
+        model.addAttribute("cartCount", cartCount);
+
         return "/user/home/discounted";
     }
+
 }

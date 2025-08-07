@@ -77,5 +77,8 @@ public class FoodServiceImpl implements FoodService<Food>{
     public List<Food> findAllDiscountedFoods() {
         return foodRepository.findByDiscountGreaterThanAndStatus(0, FoodStatus.Còn_bán);
     }
+    public Page<Food> searchFoodByKeywordAndStatusAndDiscount(String keyword, FoodStatus status, int discount, Pageable pageable) {
+        return foodRepository.searchByKeywordAndStatusAndDiscount(keyword, status, discount, pageable);
+    }
 
 }

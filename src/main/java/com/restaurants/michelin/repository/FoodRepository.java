@@ -21,5 +21,10 @@ public interface FoodRepository extends JpaRepository<Food, Integer> {
     Page<Food> findByStatusAndDiscountOrderByIdFoodDesc(FoodStatus status, int discount, Pageable pageable);
     List<Food> findTop5ByDiscountGreaterThanAndStatusOrderByDiscountDesc(int discount, FoodStatus status);
     List<Food> findByDiscountGreaterThanAndStatus(int discount, FoodStatus status);
+    @Query("SELECT f FROM Food f WHERE f.status = :status AND f.discount = :discount AND LOWER(f.nameFood) LIKE LOWER(CONCAT('%', :keyword, '%')) ORDER BY f.idFood DESC")
+    Page<Food> searchByKeywordAndStatusAndDiscount(@Param("keyword") String keyword,
+                                                   @Param("status") FoodStatus status,
+                                                   @Param("discount") int discount,
+                                                   Pageable pageable);
 
 }

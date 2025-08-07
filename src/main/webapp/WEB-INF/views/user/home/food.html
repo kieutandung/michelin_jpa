@@ -93,6 +93,17 @@
         .cart-icon:hover {
             color: #ffd700;
         }
+        .cart-icon .badge {
+            position: absolute;
+            top: -8px;
+            background-color: red;
+            color: white;
+            font-weight: bold;
+            padding: 2px 8px;
+            font-size: 12px;
+            border-radius: 20px;
+            line-height: 1;
+        }
 
         .user-menu {
             display: flex;
@@ -525,6 +536,7 @@
 <div class="header">
     <div class="logo-container">
         <img src="/image/logo.png" alt="Logo">
+        <span id="logo">Michelin</span>
     </div>
     <!-- Thông báo thành công hoặc lỗi -->
     <div th:if="${message}" class="toast-message toast-success">
