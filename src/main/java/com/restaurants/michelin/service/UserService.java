@@ -18,5 +18,4 @@ public interface UserService {
     User findByName(String name);
     void updateProfile(User user, MultipartFile avatar, HttpServletRequest request);
     List<User> searchByName(String keyword);
-
 }

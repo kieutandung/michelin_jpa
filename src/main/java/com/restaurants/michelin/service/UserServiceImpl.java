@@ -60,21 +60,29 @@ public class UserServiceImpl implements UserService{
 
         if (avatar != null && !avatar.isEmpty()) {
             try {
-                String fileName = UUID.randomUUID() + "_" + avatar.getOriginalFilename();
                 String uploadPath = request.getServletContext().getRealPath("/image/");
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
                 }
+
+                // Đặt tên ảnh theo ID người dùng
+                String fileName = avatar.getOriginalFilename();
                 File savedFile = new File(uploadPath + fileName);
+
+                // Ghi đè ảnh cũ
                 avatar.transferTo(savedFile);
+
+                // Cập nhật tên ảnh vào DB
                 existing.setImage(fileName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         userRepository.save(existing);
     }
+
 
     @Override
     public List<User> searchByName(String keyword) {

@@ -266,7 +266,8 @@ public class UserController {
         return "/user/order/detail";
     }
     @GetMapping("/profile")
-    public String userProfile(HttpSession session, Model model) {
+    public String userProfile(@RequestParam(value = "updateSuccess", required = false) String updateSuccess,
+                              HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (loggedInUser == null) {
@@ -275,13 +276,22 @@ public class UserController {
 
         User user = userService.findById(loggedInUser.getIdUser());
         model.addAttribute("user", user);
+
+        String msg = (String) session.getAttribute("updateSuccess");
+        if (msg != null) {
+            model.addAttribute("updateSuccess", msg);
+            session.removeAttribute("updateSuccess");
+        }
+
         return "/user/account/profile";
     }
+
     @PostMapping("/profile/update")
     public String updateProfile(@ModelAttribute User user,
                                 @RequestParam("avatar") MultipartFile avatar,
                                 HttpSession session,
-                                HttpServletRequest request) {
+                                HttpServletRequest request,
+                                RedirectAttributes redirectAttributes) {
         User sessionUser = (User) session.getAttribute("loggedInUser");
         if (sessionUser == null) return "redirect:/michelin/login";
 
@@ -291,8 +301,11 @@ public class UserController {
         User updatedUser = userService.findById(user.getIdUser());
         session.setAttribute("loggedInUser", updatedUser);
 
+        redirectAttributes.addFlashAttribute("updateSuccess", "Cập nhật thành công!");
+
         return "redirect:/michelin/user/home/profile";
     }
+
     @PostMapping("/order/cancel")
     public String cancelOrder(@RequestParam("orderId") Integer orderId) {
         Order order = orderService.findById(orderId);

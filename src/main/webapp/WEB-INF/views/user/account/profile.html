@@ -264,12 +264,35 @@
         .btn-save:hover {
             background-color: #d9441f;
         }
+        .toast-message {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            min-width: 200px;
+            padding: 10px 20px;
+            z-index: 1050;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            opacity: 0.95;
+        }
+        .toast-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
     </style>
 </head>
 <body>
 <div class="header">
     <div class="logo-container">
         <img src="/image/logo.png" alt="Logo">
+    </div>
+    <div th:if="${updateSuccess}" class="toast-message toast-success" id="toastSuccess">
+        <i class="fa-solid fa-circle-check"></i>
+        <span th:text="${updateSuccess}">Cập nhật thành công!</span>
     </div>
 
     <nav class="nav-links">
@@ -281,7 +304,7 @@
     </nav>
 
     <div class="search-wrapper">
-        <form th:action="@{/michelin/user/home/search}" method="get" class="position-relative search-wrapper" style="max-width: 300px; width: 100%;">
+        <form th:action="@{/michelin/user/home/menu}" method="get" class="position-relative search-wrapper" style="max-width: 300px; width: 100%;">
             <input type="text" name="keyword" class="form-control search-input" placeholder="Tìm món ăn..." th:value="${param.keyword}">
         </form>
     </div>
@@ -312,34 +335,34 @@
 <div class="profile-wrapper">
     <div class="profile-header">Hồ Sơ Của Tôi</div>
 
-    <form th:action="@{/michelin/user/home/profile/update}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/michelin/user/home/profile/update}" method="post" enctype="multipart/form-data" th:object="${user}">
         <div class="profile-container">
             <div class="profile-form">
                 <div class="form-row">
-                    <label>Tên đăng nhập</label>
-                    <input type="text" th:value="${user.name}" readonly>
+                    <label>Tên người dùng</label>
+                    <input type="text" th:field="*{name}" readonly>
                 </div>
 
                 <div class="form-row">
                     <label>Email</label>
-                    <input type="email" name="email" th:value="${user.email}">
+                    <input type="email" th:field="*{email}">
                 </div>
 
                 <div class="form-row">
                     <label>Số điện thoại</label>
-                    <input type="tel" name="phone" th:value="${user.phone}">
+                    <input type="tel" th:field="*{phone}">
                 </div>
 
                 <div class="form-row">
                     <label>Địa chỉ</label>
-                    <input type="text" name="address" th:value="${user.address}">
+                    <input type="text" th:field="*{address}">
                 </div>
 
                 <button class="btn-save" type="submit">Lưu</button>
             </div>
 
             <div class="profile-avatar">
-                <img id="avatarPreview" th:src="@{'/image/' + ${user.image}}">
+                <img id="avatarPreview" th:src="@{'/image/' + *{image}}">
                 <label class="upload-btn" for="avatar">Chọn ảnh</label>
                 <input class="upload-input" type="file" name="avatar" id="avatar" onchange="previewImage(event)">
             </div>
@@ -362,5 +385,16 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+</script>
+<script>
+    // Tự động ẩn thông báo sau 3 giây
+    window.addEventListener("DOMContentLoaded", function () {
+        const toast = document.getElementById("toastSuccess");
+        if (toast) {
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000); // 3 giây
+        }
+    });
 </script>
 </html>
